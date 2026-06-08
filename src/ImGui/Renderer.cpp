@@ -56,34 +56,51 @@ namespace ImGui::Renderer
 		static inline REL::Relocation<decltype(thunk)> func;
 	};
 
-	// IMenu::PostDisplay
-	struct PostDisplay
+	void DrawKillFeed()
 	{
-		static void thunk(RE::IMenu* a_menu)
+		// Skip if Imgui is not loaded
+		if (!initialized.load() || Manager::GetSingleton()->IsFeedEmpty()) {
+			return;
+		}
+
+		ImGui_ImplDX11_NewFrame();
+		ImGui_ImplWin32_NewFrame();
 		{
-			// Skip if Imgui is not loaded
-			if (!initialized.load() || Manager::GetSingleton()->IsFeedEmpty()) {
-				return func(a_menu);
-			}
+			//trick imgui into rendering at game's real resolution (ie. if upscaled with Display Tweaks)
+			static const auto [width, height] = RE::BSGraphics::Renderer::GetScreenSize();
 
-			ImGui_ImplDX11_NewFrame();
-			ImGui_ImplWin32_NewFrame();
-			{
-				//trick imgui into rendering at game's real resolution (ie. if upscaled with Display Tweaks)
-				static const auto [width, height] = RE::BSGraphics::Renderer::GetScreenSize();
+			auto& io = ImGui::GetIO();
+			io.DisplaySize.x = static_cast<float>(width);
+			io.DisplaySize.y = static_cast<float>(height);
+		}
+		ImGui::NewFrame();
+		{
+			CauseOfDeathManager::GetSingleton()->ReloadIconsOnDemand();
+			Manager::GetSingleton()->Draw();
+		}
+		ImGui::EndFrame();
+		ImGui::Render();
+		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	}
 
-				auto& io = ImGui::GetIO();
-				io.DisplaySize.x = static_cast<float>(width);
-				io.DisplaySize.y = static_cast<float>(height);
-			}
-			ImGui::NewFrame();
-			{
-				CauseOfDeathManager::GetSingleton()->ReloadIconsOnDemand();
-				Manager::GetSingleton()->Draw();
-			}
-			ImGui::EndFrame();
-			ImGui::Render();
-			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	// IMenu::PostDisplay
+	struct HUDMenu_PostDisplay
+	{
+		static void thunk(RE::HUDMenu* a_menu)
+		{
+			DrawKillFeed();
+
+			func(a_menu);
+		}
+		static inline REL::Relocation<decltype(thunk)> func;
+		static inline std::size_t                      idx{ 0x6 };
+	};
+
+	struct JournalMenu_PostDisplay
+	{
+		static void thunk(RE::JournalMenu* a_menu)
+		{
+			DrawKillFeed();
 
 			func(a_menu);
 		}
@@ -96,7 +113,7 @@ namespace ImGui::Renderer
 		REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(75595, 77226), OFFSET(0x9, 0x275) };  // BSGraphics::InitD3D
 		stl::write_thunk_call<CreateD3DAndSwapChain>(target.address());
 
-		stl::write_vfunc<RE::HUDMenu, PostDisplay>();
-		stl::write_vfunc<RE::JournalMenu, PostDisplay>();
+		stl::write_vfunc<RE::HUDMenu, HUDMenu_PostDisplay>();
+		stl::write_vfunc<RE::JournalMenu, JournalMenu_PostDisplay>();
 	}
 }
