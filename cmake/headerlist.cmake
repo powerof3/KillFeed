@@ -1,0 +1,20 @@
+set(headers ${headers}
+	src/API/NND_API.h
+	src/CauseOfDeath.h
+	src/CauseOfDeathEnum.h
+	src/Compatibility.h
+	src/DeathData.h
+	src/Debug.h
+	src/Hooks.h
+	src/ImGui/BSFont.h
+	src/ImGui/FontStyles.h
+	src/ImGui/Graphics.h
+	src/ImGui/Renderer.h
+	src/ImGui/Util.h
+	src/KillFeed.h
+	src/Manager.h
+	src/PCH.h
+	src/Papyrus.h
+	src/RE.h
+	src/Settings.h
+)

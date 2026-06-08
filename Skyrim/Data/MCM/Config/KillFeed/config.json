@@ -1,0 +1,593 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Exit-9B/MCM-Helper/main/docs/config.schema.json",
+  "modName": "KillFeed",
+  "displayName": "$KF_KillFeed",
+  "minMcmVersion": 13,
+  "pluginRequirements": [ "KillFeed.esp" ],
+  "cursorFillMode": "topToBottom",
+  "pages": [
+    {
+      "pageDisplayName": "$KF_Notifications_Page",
+      "cursorFillMode": "topToBottom",
+      "content": [
+        {
+          "text": "$KF_General_Header",
+          "type": "header"
+        },
+        {
+          "id": "bDebug:KillFeed",
+          "text": "$KF_Debug_Text",
+          "type": "toggle",
+          "help": "$KF_Debug_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingBool"
+          }
+        },
+        {
+          "id": "fMaxDistance:KillFeed",
+          "type": "slider",
+          "text": "$KF_MaxDistance_Text",
+          "help": "$KF_MaxDistance_Help",
+          "valueOptions": {
+              "min": 0.0,
+              "max": 10240.0,
+              "step": 128.0,
+              "formatString": "{0}",
+              "sourceType": "ModSettingFloat"
+          }
+        },
+        {
+          "text": "$KF_Player_Header",
+          "type": "header"
+        },
+        {
+          "id": "iVisibilityKills:Player",
+          "text": "$KF_VisibilityKills_Text",
+          "type": "enum",
+          "help": "$KF_VisibilityKills_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingInt",
+            "options": [
+              "$KF_Visibility_None",
+              "$KF_Visibility_VisibleOnly",
+              "$KF_Visibility_HiddenOnly",
+              "$KF_Visibility_Both"
+            ]
+          }
+        },
+        {
+          "id": "iVisibilityReanimation:Player",
+          "text": "$KF_VisibilityReanimation_Text",
+          "type": "enum",
+          "help": "$KF_VisibilityReanimation_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingInt",
+            "options": [
+              "$KF_Visibility_None",
+              "$KF_Visibility_VisibleOnly",
+              "$KF_Visibility_HiddenOnly",
+              "$KF_Visibility_Both"
+            ]
+          }
+        },
+        {
+          "id": "sTextColor:Player",
+          "text": "$KF_TextColor_Text",
+          "type": "input",
+          "help": "$KF_TextColor_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingString"
+          }
+        },
+        {
+          "id": "rTextColor:Player",
+          "text": "",
+          "type": "color",
+          "help": "",
+          "valueOptions": {
+            "sourceType": "ModSettingInt"
+          }
+        },
+        {
+          "text": "$KF_Followers_Header",
+          "type": "header"
+        },
+        {
+          "id": "iVisibilityKills:Followers",
+          "text": "$KF_VisibilityKills_Text",
+          "type": "enum",
+          "help": "$KF_VisibilityKills_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingInt",
+            "options": [
+              "$KF_Visibility_None",
+              "$KF_Visibility_VisibleOnly",
+              "$KF_Visibility_HiddenOnly",
+              "$KF_Visibility_Both"
+            ]
+          }
+        },
+        {
+          "id": "iVisibilityReanimation:Followers",
+          "text": "$KF_VisibilityReanimation_Text",
+          "type": "enum",
+          "help": "$KF_VisibilityReanimation_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingInt",
+            "options": [
+              "$KF_Visibility_None",
+              "$KF_Visibility_VisibleOnly",
+              "$KF_Visibility_HiddenOnly",
+              "$KF_Visibility_Both"
+            ]
+          }
+        },
+        {
+          "id": "sTextColor:Followers",
+          "text": "$KF_TextColor_Text",
+          "type": "input",
+          "help": "$KF_TextColor_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingString"
+          }
+        },
+        {
+          "id": "rTextColor:Followers",
+          "text": "",
+          "type": "color",
+          "help": "",
+          "valueOptions": {
+            "sourceType": "ModSettingInt"
+          }
+        },
+        {
+          "text": "$KF_Allies_Header",
+          "type": "header",
+          "position": 1
+        },
+        {
+          "id": "iVisibilityKills:Allies",
+          "text": "$KF_VisibilityKills_Text",
+          "type": "enum",
+          "help": "$KF_VisibilityKills_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingInt",
+            "options": [
+              "$KF_Visibility_None",
+              "$KF_Visibility_VisibleOnly",
+              "$KF_Visibility_HiddenOnly",
+              "$KF_Visibility_Both"
+            ]
+          }
+        },
+        {
+          "id": "iVisibilityReanimation:Allies",
+          "text": "$KF_VisibilityReanimation_Text",
+          "type": "enum",
+          "help": "$KF_VisibilityReanimation_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingInt",
+            "options": [
+              "$KF_Visibility_None",
+              "$KF_Visibility_VisibleOnly",
+              "$KF_Visibility_HiddenOnly",
+              "$KF_Visibility_Both"
+            ]
+          }
+        },
+        {
+          "id": "sTextColor:Allies",
+          "text": "$KF_TextColor_Text",
+          "type": "input",
+          "help": "$KF_TextColor_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingString"
+          }
+        },
+        {
+          "id": "rTextColor:Allies",
+          "text": "",
+          "type": "color",
+          "help": "",
+          "valueOptions": {
+            "sourceType": "ModSettingInt"
+          }
+        },
+        {
+          "text": "$KF_Hostiles_Header",
+          "type": "header"
+        },
+        {
+          "id": "iVisibilityKills:Hostiles",
+          "text": "$KF_VisibilityKills_Text",
+          "type": "enum",
+          "help": "$KF_VisibilityKills_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingInt",
+            "options": [
+              "$KF_Visibility_None",
+              "$KF_Visibility_VisibleOnly",
+              "$KF_Visibility_HiddenOnly",
+              "$KF_Visibility_Both"
+            ]
+          }
+        },
+        {
+          "id": "iVisibilityReanimation:Hostiles",
+          "text": "$KF_VisibilityReanimation_Text",
+          "type": "enum",
+          "help": "$KF_VisibilityReanimation_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingInt",
+            "options": [
+              "$KF_Visibility_None",
+              "$KF_Visibility_VisibleOnly",
+              "$KF_Visibility_HiddenOnly",
+              "$KF_Visibility_Both"
+            ]
+          }
+        },
+        {
+          "id": "sTextColor:Hostiles",
+          "text": "$KF_TextColor_Text",
+          "type": "input",
+          "help": "$KF_TextColor_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingString"
+          }
+        },
+        {
+          "id": "rTextColor:Hostiles",
+          "text": "",
+          "type": "color",
+          "help": "",
+          "valueOptions": {
+            "sourceType": "ModSettingInt"
+          }
+        },
+        {
+          "text": "$KF_Environmental_Header",
+          "type": "header"
+        },
+        {
+          "id": "iVisibilityKills:Environmental",
+          "text": "$KF_VisibilityKills_Text",
+          "type": "enum",
+          "help": "$KF_VisibilityKills_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingInt",
+            "options": [
+              "$KF_Visibility_None",
+              "$KF_Visibility_VisibleOnly",
+              "$KF_Visibility_HiddenOnly",
+              "$KF_Visibility_Both"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "pageDisplayName": "$KF_Appearance_Page",
+      "cursorFillMode": "topToBottom",
+      "content": [
+        {
+          "text": "$KF_Entries_Header",
+          "type": "header"
+        },
+        {
+          "id": "iNumEntries:Entries",
+          "text": "$KF_NumEntries_Text",
+          "type": "slider",
+          "help": "$KF_NumEntries_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingInt",
+            "min": 1,
+            "max": 10,
+            "step": 1
+          }
+        },
+        {
+          "id": "bShowDistance:Entries",
+          "text": "$KF_ShowDistance_Text",
+          "type": "toggle",
+          "help": "$KF_ShowDistance_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingBool"
+          }
+        },
+        {
+          "id": "bShowDirection:Entries",
+          "text": "$KF_ShowDirection_Text",
+          "type": "toggle",
+          "help": "$KF_ShowDirection_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingBool"
+          }
+        },
+        {
+          "id": "fVerticalSpacing:Entries",
+          "text": "$KF_VerticalSpacing_Text",
+          "type": "slider",
+          "help": "$KF_VerticalSpacing_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingFloat",
+            "min": 0.0,
+            "max": 10.0,
+            "step": 0.05,
+            "formatString": "{2}"
+          }
+        },
+        {
+          "id": "bShowBg:Entries",
+          "text": "$KF_ShowBackground_Text",
+          "type": "toggle",
+          "help": "$KF_ShowBackground_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingBool"
+          }
+        },
+        {
+          "text": "$KF_Text_Header",
+          "type": "header"
+        },
+        {
+          "id": "sTextColor:Text",
+          "text": "$KF_DefaultTextColor_Text",
+          "type": "input",
+          "help": "$KF_DefaultTextColor_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingString"
+          }
+        },
+        {
+          "id": "rTextColor:Text",
+          "text": "",
+          "type": "color",
+          "help": "",
+          "valueOptions": {
+            "sourceType": "ModSettingInt"
+          }
+        },
+        {
+          "id": "fTextSize:Text",
+          "text": "$KF_TextSize_Text",
+          "type": "slider",
+          "help": "$KF_TextSize_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingFloat",
+            "min": 1.0,
+            "max": 100.0,
+            "step": 1.0,
+            "formatString": "{2}"
+          }
+        },
+        {
+          "text": "$KF_Icons_Header",
+          "type": "header",
+          "position": 1
+        },
+        {
+          "id": "bIconTintOverride:Icons",
+          "text": "$KF_IconTintOverride_Text",
+          "type": "toggle",
+          "help": "$KF_IconTintOverride_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingBool"
+          }
+        },
+        {
+          "id": "sIconTint:Icons",
+          "text": "$KF_IconTint_Text",
+          "type": "input",
+          "help": "$KF_IconTint_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingString"
+          }
+        },
+        {
+          "id": "rIconTint:Icons",
+          "text": "",
+          "type": "color",
+          "help": "",
+          "valueOptions": {
+            "sourceType": "ModSettingInt"
+          }
+        },
+        {
+          "id": "fIconScale:Icons",
+          "text": "$KF_IconScale_Text",
+          "type": "slider",
+          "help": "$KF_IconScale_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingFloat",
+            "min": 0.01,
+            "max": 1.0,
+            "step": 0.01,
+            "formatString": "{3}"
+          }
+        },
+        {
+          "text": "$KF_Background_Header",
+          "type": "header"
+        },
+        {
+          "id": "sBgColor:Background",
+          "text": "$KF_BackgroundColor_Text",
+          "type": "input",
+          "help": "$KF_BackgroundColor_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingString"
+          }
+        },
+        {
+          "id": "rBgColor:Background",
+          "text": "",
+          "type": "color",
+          "help": "",
+          "valueOptions": {
+            "sourceType": "ModSettingInt"
+          }
+        },
+        {
+          "id": "fBgAlpha:Background",
+          "text": "$KF_BackgroundAlpha_Text",
+          "type": "slider",
+          "help": "$KF_BackgroundAlpha_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingFloat",
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.1,
+            "formatString": "{2}"
+          }
+        },
+        {
+          "id": "iBgFade:Background",
+          "text": "$KF_BackgroundFade_Text",
+          "type": "enum",
+          "help": "$KF_BackgroundFade_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingInt",
+            "options": [
+              "$KF_Visibility_None",
+              "$KF_Background_FromLeft",
+              "$KF_Background_FromRight",
+              "$KF_Background_BothSides"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "pageDisplayName": "$KF_Layout_Page",
+      "cursorFillMode": "topToBottom",
+      "content": [
+        {
+          "text": "$KF_Window_Header",
+          "type": "header"
+        },
+        {
+          "id": "fPosX:Window",
+          "text": "$KF_PosX_Text",
+          "type": "slider",
+          "help": "$KF_PosX_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingFloat",
+            "min": 0.0,
+            "max": 3840.0,
+            "step": 1.0,
+            "formatString": "{0}"
+          }
+        },
+        {
+          "id": "fPosY:Window",
+          "text": "$KF_PosY_Text",
+          "type": "slider",
+          "help": "$KF_PosY_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingFloat",
+            "min": 0.0,
+            "max": 2160.0,
+            "step": 1.0,
+            "formatString": "{0}"
+          }
+        },
+        {
+          "id": "fWidth:Window",
+          "text": "$KF_Width_Text",
+          "type": "slider",
+          "help": "$KF_Width_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingFloat",
+            "min": 50.0,
+            "max": 3840.0,
+            "step": 1.0,
+            "formatString": "{0}"
+          }
+        },
+        {
+          "id": "fHeight:Window",
+          "text": "$KF_Height_Text",
+          "type": "slider",
+          "help": "$KF_Height_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingFloat",
+            "min": 50.0,
+            "max": 2160.0,
+            "step": 1.0,
+            "formatString": "{0}"
+          }
+        },
+        {
+          "text": "$KF_Animation_Header",
+          "type": "header"
+        },
+        {
+          "id": "fFadeInTime:Animation",
+          "text": "$KF_FadeInTime_Text",
+          "type": "slider",
+          "help": "$KF_FadeInTime_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingFloat",
+            "min": 0.0,
+            "max": 10.0,
+            "step": 0.1,
+            "formatString": "{2}"
+          }
+        },
+        {
+          "id": "fLifeTime:Animation",
+          "text": "$KF_LifeTime_Text",
+          "type": "slider",
+          "help": "$KF_LifeTime_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingFloat",
+            "min": 0.1,
+            "max": 10.0,
+            "step": 0.1,
+            "formatString": "{2}"
+          }
+        },
+        {
+          "id": "fFadeOutTime:Animation",
+          "text": "$KF_FadeOutTime_Text",
+          "type": "slider",
+          "help": "$KF_FadeOutTime_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingFloat",
+            "min": 0.0,
+            "max": 10.0,
+            "step": 0.1,
+            "formatString": "{2}"
+          }
+        },
+        {
+          "id": "fSlideOffsetX:Animation",
+          "text": "$KF_SlideOffsetX_Text",
+          "type": "slider",
+          "help": "$KF_SlideOffsetX_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingFloat",
+            "min": -50.0,
+            "max": 50.0,
+            "step": 1.0,
+            "formatString": "{2}"
+          }
+        },
+        {
+          "id": "fSlideOffsetY:Animation",
+          "text": "$KF_SlideOffsetY_Text",
+          "type": "slider",
+          "help": "$KF_SlideOffsetY_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingFloat",
+            "min": -50.0,
+            "max": 50.0,
+            "step": 1.0,
+            "formatString": "{2}"
+          }
+        }
+      ]
+    }
+  ]
+}

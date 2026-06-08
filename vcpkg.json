@@ -1,0 +1,24 @@
+{
+  "name": "kill-feed",
+  "version-string": "1.0.0",
+  "description": "",
+  "homepage": "",
+  "license": "MIT",
+  "dependencies": [
+    "clib-util",
+    "boost-circular-buffer",
+    "boost-unordered",
+    "directxtex",
+    "freetype",
+    {
+      "name": "imgui",
+      "features": [ "dx11-binding", "win32-binding", "freetype", "wchar32" ]
+    },
+    "glaze",
+    "rsm-binary-io",
+    "srell",
+    "spdlog",
+    "xbyak"
+  ],
+  "builtin-baseline": "3fb54e6717ea6a48099b02798e82fafefb2d410e"
+}

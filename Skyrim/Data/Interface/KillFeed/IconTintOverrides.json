@@ -1,0 +1,23 @@
+{
+   "fire":"#c73636",
+   "dragon-fire":"#c73636",
+   "shout-fire":"#c73636",
+   "frost":"#1ffbff",
+   "dragon-frost":"#1ffbff",
+   "shock":"#eaab00",
+   "dragon-shock":"#eaab00",
+   "shout-shock":"#eaab00",
+   "sun":"#FFCC33",
+   "drain":"#a31515",
+   "dragon-drain":"#a31515",
+   "shout-drain":"#a31515",
+   "banished":"#AA82DC",
+   "poison":"#c0f86d",
+   "spriggan-spray":"#c0f86d",
+   "afflicted-spray":"#c0f86d",
+   "bleeding":"#FF2828",
+   "ice-spear":"#1ffbff",
+   "lava":"#ff6600",
+   "steam":"#DCE6E6",
+   "raise-zombie":"#8C6EB4"
+}
