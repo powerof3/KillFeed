@@ -13,12 +13,12 @@ concurrency:
 jobs:
   run:
     if: github.repository_owner == 'powerof3'
-    uses: powerof3/pack-skse-mod/.github/workflows/pack.yml@main
+    uses: adya/pack-skse-mod/.github/workflows/pack.yml@main
     with:
-      CMAKE_SE_CONFIG_PRESET: 'vs2026-windows-vcpkg-se'
-      CMAKE_SE_BUILD_PRESET: 'vs2026-windows-vcpkg-se'
-      CMAKE_AE_CONFIG_PRESET: 'vs2026-windows-vcpkg-ae'
-      CMAKE_AE_BUILD_PRESET: 'vs2026-windows-vcpkg-ae'
+      CMAKE_SE_CONFIG_PRESET: 'vs2022-windows-vcpkg-se'
+      CMAKE_SE_BUILD_PRESET: 'vs2022-windows-vcpkg-se'
+      CMAKE_AE_CONFIG_PRESET: 'vs2022-windows-vcpkg-ae'
+      CMAKE_AE_BUILD_PRESET: 'vs2022-windows-vcpkg-ae'
       CMAKE_VR_CONFIG_PRESET: ''
       CMAKE_VR_BUILD_PRESET: ''
       FOMOD_INCLUDE_PDB: true
