@@ -110,7 +110,7 @@ Event OnSettingChange(String a_ID)
 	elseif a_ID ==  "rBgColor:Background"
 		UpdateStringWithColor("BgColor:Background")
 		LoadMCMCategorySettings();
-	elseif a_ID ==  "sBackgroundColor:Background"
+	elseif a_ID ==  "sBgColor:Background"
 		UpdateColorWithString("BgColor:Background")
 		LoadMCMCategorySettings();
 	;
