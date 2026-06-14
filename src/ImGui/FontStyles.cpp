@@ -33,6 +33,7 @@ namespace ImGui
 
 		if (UsingDefaultFont()) {
 			logger::info("Using default font...");
+			config.GlyphExtraAdvanceX = 1.0f;
 			primaryFont.font = io.Fonts->AddFontFromMemoryCompressedTTF(BSFont_Data, BSFont_Size, 0.0f, &config);
 		} else {
 			logger::info("Using config font...");
