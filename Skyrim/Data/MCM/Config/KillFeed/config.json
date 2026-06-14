@@ -407,6 +407,15 @@
           }
         },
         {
+          "id": "bSingleIcon:Icons",
+          "text": "$KF_SingleIcon_Text",
+          "type": "toggle",
+          "help": "$KF_SingleIcon_Help",
+          "valueOptions": {
+            "sourceType": "ModSettingBool"
+          }
+        },
+        {
           "text": "$KF_Background_Header",
           "type": "header"
         },

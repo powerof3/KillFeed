@@ -82,9 +82,7 @@ bool DeathData::Combatant::Draw(ImDrawList* a_drawList, float a_posY, float a_en
 DeathData::Icon::Icon(CAUSE_OF_DEATH a_cause) :
 	cause(a_cause),
 	texture(CauseOfDeathManager::GetSingleton()->GetIcon(a_cause))
-{
-	update_tint();
-}
+{}
 
 void DeathData::Icon::update_tint()
 {
@@ -115,6 +113,10 @@ DeathData::DeathData(const RE::TESObjectREFRPtr& a_victim, const RE::TESObjectRE
 	victim.set_name(a_victim, a_victimCommander);
 
 	cache_compass_angle(a_victim);
+
+	iconMode = get_icon_mode(Manager::GetSingleton()->UseSingleIcon());
+
+	update_tints();
 }
 
 DeathData::DeathData(std::string a_victimName, std::string a_killerName, EventSource a_victimType, EventSource a_killerType, CAUSE_OF_DEATH a_primaryCause, std::optional<CAUSE_OF_DEATH> a_secondaryCause) :
@@ -149,7 +151,7 @@ DeathData::DeathData(const char* a_victimName, const char* a_killerName, CAUSE_O
 		a_secondaryCause)
 {}
 
-void DeathData::Draw(const Format& a_format, bool a_needRealTimeUpdate)
+void DeathData::Draw(const Format& a_format, bool a_needRealTimeUpdate, bool a_simpleIcons)
 {
 	const float textH = ImGui::GetTextLineHeight();
 	const float iconH = primaryCause.get_height();
@@ -160,10 +162,9 @@ void DeathData::Draw(const Format& a_format, bool a_needRealTimeUpdate)
 	const auto drawList = ImGui::GetWindowDrawList();
 
 	if (a_needRealTimeUpdate) {
-		primaryCause.update_tint();
-		if (secondaryCause) {
-			secondaryCause->update_tint();
-		}
+		iconMode = get_icon_mode(a_simpleIcons);
+
+		update_tints();
 
 		victim.update_color();
 		killer.update_color();
@@ -210,6 +211,33 @@ void DeathData::Draw(const Format& a_format, bool a_needRealTimeUpdate)
 	ImGui::Dummy(ImVec2(0.0f, totalH));
 }
 
+DeathData::IconMode DeathData::get_icon_mode(bool a_singleIcon) const
+{
+	if (!a_singleIcon || !secondaryCause || primaryCause == CAUSE_OF_DEATH::kShoutMouth) {
+		return IconMode::kBoth;
+	}
+
+	return stl::any_of(primaryCause, CAUSE_OF_DEATH::kSpellCast, CAUSE_OF_DEATH::kScroll, CAUSE_OF_DEATH::kStaffMagic) ? IconMode::kSecondaryOnly : IconMode::kPrimaryOnly;
+}
+
+void DeathData::update_tints()
+{
+	switch (iconMode.get()) {
+	case IconMode::kPrimaryOnly:
+		primaryCause.iconTint = Manager::GetSingleton()->GetIconTint(secondaryCause->get_cause());
+		break;
+	case IconMode::kSecondaryOnly:
+		secondaryCause->update_tint();
+		break;
+	case IconMode::kBoth:
+		primaryCause.update_tint();
+		if (secondaryCause) {
+			secondaryCause->update_tint();
+		}
+		break;
+	}
+}
+
 const char* DeathData::get_event_source_name(EventSource a_source)
 {
 	switch (a_source) {
@@ -244,35 +272,42 @@ void DeathData::cache_compass_angle(const RE::TESObjectREFRPtr& a_victim)
 
 bool DeathData::drawIcons(float a_posY, float a_entryH) const
 {
-	static constexpr std::array overlappingIcons{
-		CAUSE_OF_DEATH::kShoutMouth
-	};
-
 	if (!primaryCause) {
 		return false;
 	}
 
-	primaryCause.Draw(a_posY, a_entryH);
+	switch (iconMode.get()) {
+	case IconMode::kPrimaryOnly:
+		primaryCause.Draw(a_posY, a_entryH);
+		break;
+	case IconMode::kSecondaryOnly:
+		secondaryCause->Draw(a_posY, a_entryH);
+		break;
+	case IconMode::kBoth:
+		{
+			primaryCause.Draw(a_posY, a_entryH);
 
-	if (secondaryCause) {
-		if (std::ranges::any_of(overlappingIcons, [&](auto& icon) { return icon == primaryCause.get_cause(); })) {
-			const auto primaryW = primaryCause.get_width();
-			const auto secondaryW = secondaryCause->get_width();
+			if (secondaryCause) {
+				if (primaryCause == CAUSE_OF_DEATH::kShoutMouth) {
+					const auto primaryW = primaryCause.get_width();
+					const auto secondaryW = secondaryCause->get_width();
 
-			ImGui::SameLine(0.0f, 0.0f);
-			const auto primaryEndX = ImGui::GetCursorPosX();
-			ImGui::SetCursorPosX(primaryEndX - primaryW + (primaryW - secondaryW) * 0.5f);
+					ImGui::SameLine(0.0f, 0.0f);
+					const auto primaryEndX = ImGui::GetCursorPosX();
+					ImGui::SetCursorPosX(primaryEndX - primaryW + (primaryW - secondaryW) * 0.5f);
 
-			secondaryCause->Draw(a_posY, a_entryH);
+					secondaryCause->Draw(a_posY, a_entryH);
 
-			ImGui::SameLine(0.0f, 0.0f);
-			ImGui::SetCursorPosX(primaryEndX + std::max(0.0f, (secondaryW - primaryW) * 0.5f));
-		} else {
-			ImGui::SameLine(0.0f, 0.0f);
-			secondaryCause->Draw(a_posY, a_entryH);
+					ImGui::SameLine(0.0f, 0.0f);
+					ImGui::SetCursorPosX(primaryEndX + std::max(0.0f, (secondaryW - primaryW) * 0.5f));
+				} else {
+					ImGui::SameLine(0.0f, 0.0f);
+					secondaryCause->Draw(a_posY, a_entryH);
+				}
+			}
 		}
+		break;
 	}
-
 	return true;
 }
 

@@ -81,6 +81,7 @@ void Manager::LoadGenericSettings(CSimpleIniA& a_ini)
 	ini::get_value(a_ini, numEntries, "Entries", "iNumEntries");
 	ini::get_value(a_ini, verticalSpacingMult, "Entries", "fVerticalSpacing");
 	ini::get_value(a_ini, enableIconTintOverride, "Icons", "bIconTintOverride");
+	ini::get_value(a_ini, singleIcon, "Icons", "bSingleIcon");
 
 	killFeed.load_mcm_settings(a_ini);
 	format.load_generic_settings(a_ini);
@@ -93,6 +94,7 @@ void Manager::SyncGenericSettings(CSimpleIniA& a_ini, SyncMode a_mode)
 	Settings::Visit(a_ini, numEntries, "Entries", "iNumEntries", a_mode);
 	Settings::Visit(a_ini, verticalSpacingMult, "Entries", "fVerticalSpacing", a_mode);
 	Settings::Visit(a_ini, enableIconTintOverride, "Icons", "bIconTintOverride", a_mode);
+	Settings::Visit(a_ini, singleIcon, "Icons", "bSingleIcon", a_mode);
 
 	killFeed.sync_settings(a_ini, a_mode);
 	format.sync_settings(a_ini, a_mode);
@@ -297,7 +299,7 @@ void Manager::Draw()
 				auto finalOffset = data.primaryCause == CAUSE_OF_DEATH::kRaiseZombie ? -offset : offset;
 				ImGui::SetCursorScreenPos(ImGui::GetCursorScreenPos() + finalOffset);
 
-				data.Draw(format, inMCM.load(std::memory_order::relaxed));
+				data.Draw(format, inMCM.load(std::memory_order::relaxed), singleIcon);
 			}
 			ImGui::PopStyleColor();
 			ImGui::PopStyleVar();
