@@ -97,22 +97,34 @@ struct DeathData
 		kDummyData = 1 << 1,
 	};
 
+	enum class IconMode
+	{
+		kBoth = 0,
+		kPrimaryOnly,
+		kSecondaryOnly
+	};
+
 	DeathData() = default;
 	DeathData(const RE::TESObjectREFRPtr& a_victim, const RE::TESObjectREFRPtr& a_killer, float a_distance, CAUSE_OF_DEATH a_primaryCause, std::optional<CAUSE_OF_DEATH> a_secondaryCause = std::nullopt, const RE::ActorPtr& a_victimCommander = nullptr);
 	DeathData(EventSource a_victimSource, EventSource a_killerSource, CAUSE_OF_DEATH a_cause, std::optional<CAUSE_OF_DEATH> a_secondaryCause = std::nullopt);
 	DeathData(const char* a_victimName, const char* a_killerName, CAUSE_OF_DEATH a_cause, std::optional<CAUSE_OF_DEATH> a_secondaryCause = std::nullopt);
 
-	void Draw(const Format& a_format, bool a_needRealTimeUpdate);
+	void Draw(const Format& a_format, bool a_needRealTimeUpdate, bool a_simpleIcons);
 
 	[[nodiscard]] bool is_dummy_data() const noexcept { return flags.any(Flags::kDummyData); }
 
 	void               set_offscreen(bool a_isOffscreen) noexcept { flags.set(a_isOffscreen, Flags::kOffscreen); }
 	[[nodiscard]] bool is_offscreen() const noexcept { return flags.any(Flags::kOffscreen); }
 
+	DeathData::IconMode get_icon_mode(bool a_simpleIcons) const;
+	
+	void update_tints();
+
 	// members
 	Icon                              primaryCause{};
 	std::optional<Icon>               secondaryCause{};
 	REX::EnumSet<Flags, std::uint8_t> flags{ Flags::kNone };
+	REX::Enum<IconMode, std::uint8_t> iconMode{ IconMode::kBoth };
 	Combatant                         victim{};
 	Combatant                         killer{};
 	std::string                       distance{};

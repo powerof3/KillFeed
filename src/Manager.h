@@ -37,6 +37,7 @@ public:
 	void          LoadIconTintOverrides();
 	const ImVec4& GetIconTint(CAUSE_OF_DEATH a_cause) const;
 	const ImVec4& GetTextColor(EventSource a_source) const;
+	bool          UseSingleIcon() const { return singleIcon; }
 
 	void UpdateVerticalSpacing() const;
 
@@ -104,6 +105,7 @@ private:
 	std::array<CategorySettings, EventSource::kTotal> categories;
 	bool                                              visible{ true };
 	bool                                              enableDebug{ false };
+	bool                                              singleIcon{ false };
 	std::atomic<bool>                                 inMCM{ false };
 	bool                                              enableIconTintOverride{ true };
 	FlatMap<CAUSE_OF_DEATH, ImVec4>                   iconTintOverrides;
