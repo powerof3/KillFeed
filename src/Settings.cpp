@@ -123,7 +123,7 @@ bool Settings::SyncStylesToMCMIfNewer()
 void Settings::SyncStylesAndMCM()
 {
 	logger::info("Syncing styles.ini and MCM settings");
-	
+
 	Save(FileType::kStyles, [this](auto& a_ini) {
 		schema(a_ini, SyncMode::WriteToStyles);
 	});

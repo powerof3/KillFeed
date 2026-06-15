@@ -76,9 +76,9 @@ private:
 
 		const ImVec4& get_text_color() const noexcept { return textColor; }
 
-	private:	
+	private:
 		static constexpr std::array visibilityKeys{ "$KF_Visibility_None", "$KF_Visibility_VisibleOnly", "$KF_Visibility_HiddenOnly", "$KF_Visibility_Both" };
-		
+
 		// members
 		ImVec4                                 textColor{};
 		REX::EnumSet<Visibility, std::uint8_t> visibilityKills{ Visibility::kBoth };
@@ -124,11 +124,11 @@ private:
 	FlatMap<CAUSE_OF_DEATH, ImVec4>                   iconTintOverrides;
 	FlatSet<RE::FormID>                               spawnedDebugActors{};
 
-	static constexpr std::array fadeKeys{ 
-		"$KF_Visibility_None", 
-		"$KF_Background_FromLeft", 
-		"$KF_Background_FromRight", 
-		"$KF_Background_BothSides" 
+	static constexpr std::array fadeKeys{
+		"$KF_Visibility_None",
+		"$KF_Background_FromLeft",
+		"$KF_Background_FromRight",
+		"$KF_Background_BothSides"
 	};
 
 	static constexpr std::array<const char*, EventSource::kTotal> categoryNames{

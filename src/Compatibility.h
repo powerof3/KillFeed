@@ -3,7 +3,7 @@
 #include "API/FUCK_API.h"
 #include "API/NND_API.h"
 
-enum EventSource: std::uint8_t;
+enum EventSource : std::uint8_t;
 
 class ModAPIHandler
 {

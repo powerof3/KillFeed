@@ -36,8 +36,8 @@ namespace FUCK
 	enum class Modifier
 	{
 		kShift = 0,
-		kCtrl  = 1,
-		kAlt   = 2
+		kCtrl = 1,
+		kAlt = 2
 	};
 
 	enum class BindResult
@@ -57,7 +57,7 @@ namespace FUCK
 
 	enum class TableBgTarget
 	{
-		kNone   = 0,
+		kNone = 0,
 		kRowBg0 = 1,
 		kRowBg1 = 2,
 		kCellBg = 3
@@ -66,100 +66,100 @@ namespace FUCK
 	// --- Bitflags ---
 	enum class WindowFlags
 	{
-		kNone            = 0,
-		kPauseHard       = 1 << 0,   // Fully suspends the game engine
-		kPauseSoft       = 1 << 1,   // Freezes game time
-		kBlockVanity     = 1 << 2,   // Prevents idle vanity camera
-		kHideHUD         = 1 << 3,   // Hides the in-game HUD
-		kBlurBackground  = 1 << 4,   // Blurs the game world
-		kPassInputToGame = 1 << 5,   // Allows player control while open
-		kCloseOnEsc      = 1 << 6,   // Closes when Escape is pressed
-		kCloseOnGameMenu = 1 << 7,   // Hides when native game menus open
-		kNoDecoration    = 1 << 8,   // Removes title bar and controls
-		kNoBackground    = 1 << 9,   // Makes window background transparent
-		kExtendBorder    = 1 << 10,  // Draws border outside window bounds
-		kNoResize        = 1 << 11,  // Prevents manual resizing by the user
-		kNoMove          = 1 << 12,  // Prevents manual dragging by the user
-		kAutoResize      = 1 << 13,  // Sizes automatically to contents
-		kIgnoreUserScale = 1 << 14   // Ignores global UI scaling slider
+		kNone = 0,
+		kPauseHard = 1 << 0,        // Fully suspends the game engine
+		kPauseSoft = 1 << 1,        // Freezes game time
+		kBlockVanity = 1 << 2,      // Prevents idle vanity camera
+		kHideHUD = 1 << 3,          // Hides the in-game HUD
+		kBlurBackground = 1 << 4,   // Blurs the game world
+		kPassInputToGame = 1 << 5,  // Allows player control while open
+		kCloseOnEsc = 1 << 6,       // Closes when Escape is pressed
+		kCloseOnGameMenu = 1 << 7,  // Hides when native game menus open
+		kNoDecoration = 1 << 8,     // Removes title bar and controls
+		kNoBackground = 1 << 9,     // Makes window background transparent
+		kExtendBorder = 1 << 10,    // Draws border outside window bounds
+		kNoResize = 1 << 11,        // Prevents manual resizing by the user
+		kNoMove = 1 << 12,          // Prevents manual dragging by the user
+		kAutoResize = 1 << 13,      // Sizes automatically to contents
+		kIgnoreUserScale = 1 << 14  // Ignores global UI scaling slider
 	};
 
 	enum class TableFlags
 	{
-		kNone              = 0,
-		kResizable         = 1 << 0,
-		kReorderable       = 1 << 1,
-		kHideable          = 1 << 2,
-		kSortable          = 1 << 3,
-		kNoSavedSettings   = 1 << 4,
+		kNone = 0,
+		kResizable = 1 << 0,
+		kReorderable = 1 << 1,
+		kHideable = 1 << 2,
+		kSortable = 1 << 3,
+		kNoSavedSettings = 1 << 4,
 		kContextMenuInBody = 1 << 5,
-		kRowBg             = 1 << 6,
-		kBordersInnerH     = 1 << 7,
-		kBordersOuterH     = 1 << 8,
-		kBordersInnerV     = 1 << 9,
-		kBordersOuterV     = 1 << 10,
-		kBordersH          = kBordersInnerH | kBordersOuterH,
-		kBordersV          = kBordersInnerV | kBordersOuterV,
-		kBorders           = kBordersInnerH | kBordersOuterH | kBordersInnerV | kBordersOuterV,
-		kSizingFixedFit    = 1 << 13,
-		kSizingFixedSame   = 2 << 13,
+		kRowBg = 1 << 6,
+		kBordersInnerH = 1 << 7,
+		kBordersOuterH = 1 << 8,
+		kBordersInnerV = 1 << 9,
+		kBordersOuterV = 1 << 10,
+		kBordersH = kBordersInnerH | kBordersOuterH,
+		kBordersV = kBordersInnerV | kBordersOuterV,
+		kBorders = kBordersInnerH | kBordersOuterH | kBordersInnerV | kBordersOuterV,
+		kSizingFixedFit = 1 << 13,
+		kSizingFixedSame = 2 << 13,
 		kSizingStretchProp = 3 << 13,
 		kSizingStretchSame = 4 << 13,
 	};
 
 	enum class TableColumnFlags
 	{
-		kNone                 = 0,
-		kDisabled             = 1 << 0,
-		kDefaultHide          = 1 << 1,
-		kDefaultSort          = 1 << 2,
-		kWidthStretch         = 1 << 3,
-		kWidthFixed           = 1 << 4,
-		kNoResize             = 1 << 5,
-		kNoReorder            = 1 << 6,
-		kNoHide               = 1 << 7,
-		kNoClip               = 1 << 8,
-		kNoSort               = 1 << 9,
-		kNoSortAscending      = 1 << 10,
-		kNoSortDescending     = 1 << 11,
-		kNoHeaderLabel        = 1 << 12,
-		kNoHeaderWidth        = 1 << 13,
-		kPreferSortAscending  = 1 << 14,
+		kNone = 0,
+		kDisabled = 1 << 0,
+		kDefaultHide = 1 << 1,
+		kDefaultSort = 1 << 2,
+		kWidthStretch = 1 << 3,
+		kWidthFixed = 1 << 4,
+		kNoResize = 1 << 5,
+		kNoReorder = 1 << 6,
+		kNoHide = 1 << 7,
+		kNoClip = 1 << 8,
+		kNoSort = 1 << 9,
+		kNoSortAscending = 1 << 10,
+		kNoSortDescending = 1 << 11,
+		kNoHeaderLabel = 1 << 12,
+		kNoHeaderWidth = 1 << 13,
+		kPreferSortAscending = 1 << 14,
 		kPreferSortDescending = 1 << 15,
-		kIndentEnable         = 1 << 16,
-		kIndentDisable        = 1 << 17
+		kIndentEnable = 1 << 16,
+		kIndentDisable = 1 << 17
 	};
 
 	enum class DragDropFlags
 	{
-		kNone                     = 0,
-		kSourceNoPreviewTooltip   = 1 << 0,
-		kSourceNoDisableHover     = 1 << 1,
+		kNone = 0,
+		kSourceNoPreviewTooltip = 1 << 0,
+		kSourceNoDisableHover = 1 << 1,
 		kSourceNoHoldToOpenOthers = 1 << 2,
-		kSourceAllowNullID        = 1 << 3,
-		kSourceExtern             = 1 << 4,
-		kSourceAutoExpirePayload  = 1 << 5,
-		kAcceptBeforeDelivery     = 1 << 10,
-		kAcceptNoDrawDefaultRect  = 1 << 11,
-		kAcceptNoPreviewTooltip   = 1 << 12,
-		kAcceptPeekOnly           = kAcceptBeforeDelivery | kAcceptNoDrawDefaultRect
+		kSourceAllowNullID = 1 << 3,
+		kSourceExtern = 1 << 4,
+		kSourceAutoExpirePayload = 1 << 5,
+		kAcceptBeforeDelivery = 1 << 10,
+		kAcceptNoDrawDefaultRect = 1 << 11,
+		kAcceptNoPreviewTooltip = 1 << 12,
+		kAcceptPeekOnly = kAcceptBeforeDelivery | kAcceptNoDrawDefaultRect
 	};
 
 	enum class ItemFlags
 	{
-		kNone         = 0,
-		kNoTabStop    = 1 << 0,
+		kNone = 0,
+		kNoTabStop = 1 << 0,
 		kButtonRepeat = 1 << 1,
-		kDisabled     = 1 << 2,
-		kNoNav        = 1 << 3
+		kDisabled = 1 << 2,
+		kNoNav = 1 << 3
 	};
 
 	enum class PopupFlags
 	{
-		kNone          = 0,
-		kAnyPopupId    = 1 << 10,
+		kNone = 0,
+		kAnyPopupId = 1 << 10,
 		kAnyPopupLevel = 1 << 11,
-		kAnyPopup      = kAnyPopupId | kAnyPopupLevel
+		kAnyPopup = kAnyPopupId | kAnyPopupLevel
 	};
 
 	inline WindowFlags      operator|(WindowFlags a, WindowFlags b) { return static_cast<WindowFlags>(static_cast<int>(a) | static_cast<int>(b)); }
@@ -173,12 +173,12 @@ namespace FUCK
 
 	enum class HotkeyFlags : int
 	{
-		kNone            = 0,
-		kAlignNear       = 1 << 0,
-		kLabelRight      = 1 << 1,
-		kCtrlToRebind    = 1 << 2,
+		kNone = 0,
+		kAlignNear = 1 << 0,
+		kLabelRight = 1 << 1,
+		kCtrlToRebind = 1 << 2,
 		kAlwaysHighlight = 1 << 3,
-		kNoModifiers     = 1 << 4
+		kNoModifiers = 1 << 4
 	};
 	inline HotkeyFlags operator|(HotkeyFlags a, HotkeyFlags b) { return static_cast<HotkeyFlags>(static_cast<int>(a) | static_cast<int>(b)); }
 	inline bool        operator&(HotkeyFlags a, HotkeyFlags b) { return (static_cast<int>(a) & static_cast<int>(b)) != 0; }
@@ -188,18 +188,18 @@ namespace FUCK
 		std::uint32_t kKey = 0, gKey = 0;
 		std::int32_t  kMod1 = -1, gMod1 = -1;
 		std::int32_t  kMod2 = -1, gMod2 = -1;
-		bool          isBinding         = false;
-		bool          wasTriggered      = false;
-		bool          waitForRelease    = false;
+		bool          isBinding = false;
+		bool          wasTriggered = false;
+		bool          waitForRelease = false;
 		bool          disallowModifiers = false;  // Single-key binds only, modifier keys treated as bindable.
 
 		void Clear()
 		{
 			kKey = gKey = 0;
 			kMod1 = gMod1 = kMod2 = gMod2 = -1;
-			isBinding                     = false;
-			wasTriggered                  = false;
-			waitForRelease                = false;
+			isBinding = false;
+			wasTriggered = false;
+			waitForRelease = false;
 		}
 	};
 
@@ -244,7 +244,7 @@ namespace FUCK
 
 		virtual void        Draw() = 0;
 		virtual void        RenderOverlay() {}
-		virtual bool        IsOpen() const       = 0;
+		virtual bool        IsOpen() const = 0;
 		virtual void        SetOpen(bool a_open) = 0;
 		virtual WindowFlags GetFlags() const { return WindowFlags::kNone; }
 		virtual ImVec2      GetDefaultSize() const { return ImVec2(400.0f, 300.0f); }
@@ -1287,7 +1287,7 @@ namespace FUCK
 	{
 		if (IsMouseReleased(0) && totalWidth > 100.0f) {
 			float childWidth = GetWindowSize().x;
-			float newWeight  = childWidth / totalWidth;
+			float newWeight = childWidth / totalWidth;
 			if (std::abs(inOutWeight - newWeight) > 0.01f) {
 				inOutWeight = newWeight;
 				return true;
@@ -1472,23 +1472,23 @@ namespace FUCK
 			_handle(other._handle), _width(other._width), _height(other._height)
 		{
 			other._handle = nullptr;
-			other._width  = 0.0f;
+			other._width = 0.0f;
 			other._height = 0.0f;
 		}
 		Image& operator=(Image&& other) noexcept
 		{
 			if (this != &other) {
 				Reset();
-				_handle       = other._handle;
-				_width        = other._width;
-				_height       = other._height;
+				_handle = other._handle;
+				_width = other._width;
+				_height = other._height;
 				other._handle = nullptr;
-				other._width  = 0.0f;
+				other._width = 0.0f;
 				other._height = 0.0f;
 			}
 			return *this;
 		}
-		Image(const Image&)            = delete;
+		Image(const Image&) = delete;
 		Image& operator=(const Image&) = delete;
 
 		[[nodiscard]] bool        IsLoaded() const { return _handle != nullptr; }
@@ -1506,14 +1506,14 @@ namespace FUCK
 				if (auto i = GetInterface())
 					i->ReleaseImage(_handle);
 				_handle = nullptr;
-				_width  = 0.0f;
+				_width = 0.0f;
 				_height = 0.0f;
 			}
 		}
 
 	private:
 		void* _handle = nullptr;
-		float _width  = 0.0f;
+		float _width = 0.0f;
 		float _height = 0.0f;
 	};
 
@@ -1692,7 +1692,7 @@ namespace FUCK
 				RemoveMenuListener(this);
 		}
 
-		MenuEventListener(const MenuEventListener&)            = delete;
+		MenuEventListener(const MenuEventListener&) = delete;
 		MenuEventListener& operator=(const MenuEventListener&) = delete;
 		MenuEventListener& operator=(MenuEventListener&& other) noexcept
 		{
@@ -1779,8 +1779,8 @@ namespace FUCK
 			DrawRect(min, max, colV4, 0.0f, thickness);
 		}
 
-		ImVec2 anchor      = customAnchor ? *customAnchor : ImVec2(min.x + (max.x - min.x) * 0.5f, min.y + (max.y - min.y) * 0.5f);
-		float  crossSize   = Scale(10.0f);
+		ImVec2 anchor = customAnchor ? *customAnchor : ImVec2(min.x + (max.x - min.x) * 0.5f, min.y + (max.y - min.y) * 0.5f);
+		float  crossSize = Scale(10.0f);
 		ImU32  anchorColor = IM_COL32(255, 0, 0, 204);
 
 		if (screenSpace) {

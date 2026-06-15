@@ -117,7 +117,7 @@ struct DeathData
 	[[nodiscard]] bool is_offscreen() const noexcept { return flags.any(Flags::kOffscreen); }
 
 	DeathData::IconMode get_icon_mode(bool a_simpleIcons) const;
-	
+
 	void update_tints();
 
 	// members
