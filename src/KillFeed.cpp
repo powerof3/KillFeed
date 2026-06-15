@@ -1,5 +1,35 @@
 #include "KillFeed.h"
 
+void KillFeed::load_fuck_settings()
+{
+	if (FUCK::CollapsingHeader("$KF_Animation_Header"_T, ImGuiTreeNodeFlags_DefaultOpen)) {
+		FUCK::Indent();
+
+		if (FUCK::SliderFloat("$KF_FadeInTime_Text"_T, &fadeInTime, 0.f, 10.f, "%.2f")) {
+			fadeOutStartTime = fadeInTime + lifeTime;
+		}
+		//FUCK::SetTooltip("$KF_FadeInTime_Help"_T);
+
+		if (FUCK::SliderFloat("$KF_LifeTime_Text"_T, &lifeTime, 0.1f, 10.f, "%.2f")) {
+			fadeOutStartTime = fadeInTime + lifeTime;
+		}
+		//FUCK::SetTooltip("$KF_LifeTime_Help"_T);
+		
+		if (FUCK::SliderFloat("$KF_FadeOutTime_Text"_T, &fadeOutTime, 0.f, 10.f, "%.2f")) {
+			maxDuration = fadeOutStartTime + fadeOutTime;
+		}
+		//FUCK::SetTooltip("$KF_FadeOutTime_Help"_T);
+
+		FUCK::SliderFloat("$KF_SlideOffsetX_Text"_T, &slideOffsetX.value, -50.f, 50.f, "%.2f");
+		//FUCK::SetTooltip("$KF_SlideOffsetX_Help"_T);
+
+		FUCK::SliderFloat("$KF_SlideOffsetY_Text"_T, &slideOffsetY.value, -50.f, 50.f, "%.2f");
+		//FUCK::SetTooltip("$KF_SlideOffsetY_Help"_T);
+
+		FUCK::Unindent();
+	}
+}
+
 void KillFeed::load_mcm_settings(CSimpleIniA& a_ini)
 {
 	ini::get_value(a_ini, fadeInTime, "Animation", "fFadeInTime");

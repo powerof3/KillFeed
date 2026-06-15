@@ -5,7 +5,7 @@
 
 namespace Papyrus
 {
-	void OnConfigOpen(RE::TESQuest*)
+	void OnMCMOpen(RE::TESQuest*)
 	{
 		Manager::GetSingleton()->OnMCMOpen();
 	}
@@ -41,7 +41,7 @@ namespace Papyrus
 			return false;
 		}
 
-		a_vm->RegisterFunction("OnConfigOpen", MCM, OnConfigOpen);
+		a_vm->RegisterFunction("OnMCMOpen", MCM, OnMCMOpen);
 		a_vm->RegisterFunction("OnConfigClose", MCM, OnConfigClose);
 		a_vm->RegisterFunction("ColorStringToInt", MCM, ColorStringToInt);
 		a_vm->RegisterFunction("LoadMCMCategorySettings", MCM, LoadMCMCategorySettings);

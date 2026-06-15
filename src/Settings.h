@@ -12,6 +12,7 @@ struct ScaledSetting
 
 	void load(CSimpleIniA& a_ini, const char* a_section, const char* a_key);
 	void apply_scale(const char* a_key, float a_resolutionScale);
+	void set(const char* a_key, float a_newValue);
 
 	// members
 	float baseValue{};
@@ -30,7 +31,7 @@ enum class SyncMode : std::uint8_t
 {
 	ReadFromStyles,
 	WriteToStyles,
-	PushToMCM
+	PushToMCM,
 };
 
 class Settings
@@ -51,6 +52,7 @@ public:
 
 	void SyncMCMToStyles() const;
 	bool SyncStylesToMCMIfNewer();
+	void SyncStylesAndMCM();
 
 	template <class T>
 	static void Visit(CSimpleIniA& a_ini, T& value, const char* a_section, const char* a_key, SyncMode a_mode);
@@ -82,6 +84,20 @@ inline constinit Settings Settings::instance;
 template <class T>
 void Settings::Visit(CSimpleIniA& a_ini, T& value, const char* a_section, const char* a_key, SyncMode a_mode)
 {
+	const auto writeToINI = [&]() {
+		if constexpr (std::is_same_v<T, bool>) {
+			a_ini.SetLongValue(a_section, a_key, static_cast<long>(value));
+		} else if constexpr (std::is_integral_v<T>) {
+			a_ini.SetLongValue(a_section, a_key, value);
+		} else if constexpr (std::is_floating_point_v<T>) {
+			a_ini.SetDoubleValue(a_section, a_key, value);
+		} else if constexpr (std::is_same_v<T, std::string>) {
+			a_ini.SetValue(a_section, a_key, value.c_str());
+		} else if constexpr (std::is_same_v<T, ImVec4>) {
+			a_ini.SetValue(a_section, a_key, ImGui::FontStyles::ToString(value, true).c_str());
+		}
+	};
+
 	switch (a_mode) {
 	case SyncMode::ReadFromStyles:
 		{
@@ -96,34 +112,12 @@ void Settings::Visit(CSimpleIniA& a_ini, T& value, const char* a_section, const 
 		}
 		break;
 	case SyncMode::WriteToStyles:
-		{
-			if constexpr (std::is_same_v<T, bool>) {
-				a_ini.SetLongValue(a_section, a_key, static_cast<long>(value));
-			} else if constexpr (std::is_integral_v<T>) {
-				a_ini.SetLongValue(a_section, a_key, value);
-			} else if constexpr (std::is_floating_point_v<T>) {
-				a_ini.SetDoubleValue(a_section, a_key, value);
-			} else if constexpr (std::is_same_v<T, std::string>) {
-				a_ini.SetValue(a_section, a_key, value.c_str());
-			} else if constexpr (std::is_same_v<T, ImVec4>) {
-				a_ini.SetValue(a_section, a_key, ImGui::FontStyles::ToString(value, true).c_str());
-			}
-		}
+		writeToINI();
 		break;
 	case SyncMode::PushToMCM:
 		{
 			// update our settings when LoadMCMSettings is called, PushMCMVar doesn't update immediately
-			if constexpr (std::is_same_v<T, bool>) {
-				a_ini.SetLongValue(a_section, a_key, static_cast<long>(value));
-			} else if constexpr (std::is_integral_v<T>) {
-				a_ini.SetLongValue(a_section, a_key, value);
-			} else if constexpr (std::is_floating_point_v<T>) {
-				a_ini.SetDoubleValue(a_section, a_key, value);
-			} else if constexpr (std::is_same_v<T, std::string>) {
-				a_ini.SetValue(a_section, a_key, value.c_str());
-			} else if constexpr (std::is_same_v<T, ImVec4>) {
-				a_ini.SetValue(a_section, a_key, ImGui::FontStyles::ToString(value, true).c_str());
-			}
+			writeToINI();
 
 			const auto name = std::format("{}:{}", a_key, a_section);
 			if constexpr (std::is_same_v<T, ImVec4>) {

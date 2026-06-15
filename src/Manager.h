@@ -21,6 +21,7 @@ public:
 	};
 
 	void OnDataLoad();
+
 	void OnMCMOpen();
 	void OnMCMClose();
 	void LoadMCMSettings(bool a_afterDataLoad = false);
@@ -28,6 +29,13 @@ public:
 	void LoadMCMGenericSettings();
 	void LoadMCMCategorySettings();
 	void LoadMCMScaledSettings();
+
+	void OnFUCKMenuOpen();
+	void OnFUCKMenuClose();
+
+	void DrawFUCKNotificationsPage();
+	void DrawFUCKAppearancePage();
+	void DrawFUCKLayoutPage();
 
 	void ApplyGenericSettings(bool a_oldDebugValue);
 	void ApplyScaledSettings();
@@ -62,11 +70,15 @@ private:
 		void load_mcm_settings(CSimpleIniA& a_ini, const char* a_section);
 		void sync_settings(CSimpleIniA& a_ini, const char* a_section, SyncMode a_mode);
 
+		void load_fuck_settings(bool a_hasColor);
+
 		std::pair<bool, bool> should_display(const RE::TESObjectREFRPtr& a_victim, EventType a_event) const;  // [should display, inView]
 
 		const ImVec4& get_text_color() const noexcept { return textColor; }
 
-	private:
+	private:	
+		static constexpr std::array visibilityKeys{ "$KF_Visibility_None", "$KF_Visibility_VisibleOnly", "$KF_Visibility_HiddenOnly", "$KF_Visibility_Both" };
+		
 		// members
 		ImVec4                                 textColor{};
 		REX::EnumSet<Visibility, std::uint8_t> visibilityKills{ Visibility::kBoth };
@@ -107,9 +119,17 @@ private:
 	bool                                              enableDebug{ false };
 	bool                                              singleIcon{ false };
 	std::atomic<bool>                                 inMCM{ false };
+	std::atomic<bool>                                 inFUCK{ false };
 	bool                                              enableIconTintOverride{ true };
 	FlatMap<CAUSE_OF_DEATH, ImVec4>                   iconTintOverrides;
 	FlatSet<RE::FormID>                               spawnedDebugActors{};
+
+	static constexpr std::array fadeKeys{ 
+		"$KF_Visibility_None", 
+		"$KF_Background_FromLeft", 
+		"$KF_Background_FromRight", 
+		"$KF_Background_BothSides" 
+	};
 
 	static constexpr std::array<const char*, EventSource::kTotal> categoryNames{
 		"Player",
@@ -117,5 +137,13 @@ private:
 		"Allies",
 		"Hostiles",
 		"Environmental",
+	};
+
+	static constexpr std::array<const char*, EventSource::kTotal> categorySettings{
+		"$KF_Player_Header",
+		"$KF_Followers_Header",
+		"$KF_Allies_Header",
+		"$KF_Hostiles_Header",
+		"$KF_Environmental_Header"
 	};
 };

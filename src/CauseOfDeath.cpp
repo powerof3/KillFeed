@@ -34,6 +34,17 @@ void CauseOfDeathManager::ReloadIconsOnDemand()
 	}
 }
 
+void CauseOfDeathManager::LoadFuckSettings()
+{
+	auto oldIconScale = iconScale;
+	if (FUCK::SliderFloat("$KF_IconScale_Text"_T, &iconScale, 0.01f, 1.f, "%.3f")) {
+		if (!numeric::essentially_equal(iconScale, oldIconScale)) {
+			reloadIcons.store(true, std::memory_order_release);
+		}
+	}
+	//FUCK::SetTooltip("$KF_IconScale_Help"_T);
+}
+
 void CauseOfDeathManager::LoadMCMSettings(CSimpleIniA& a_ini)
 {
 	auto oldIconScale = iconScale;

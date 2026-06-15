@@ -1,6 +1,6 @@
 Scriptname KillFeed_MCM extends MCM_ConfigBase
 
-Function OnConfigOpen() Native
+Function OnMCMOpen() Native
 Function OnConfigClose() Native
 Int Function ColorStringToInt(String sStr) Native
 Function LoadMCMCategorySettings() Native
@@ -26,15 +26,14 @@ endFunction
 
 Function UpdateColorWithString(String sSetting)
 
-	string colorSetting = "r" + sSetting
-	string stringSetting = "s" + sSetting
+    string colorSetting = "r" + sSetting
+    string stringSetting = "s" + sSetting
+    string colorString = GetModSettingString(stringSetting)
 
-	string colorString = GetModSettingString(stringSetting)
-	
-	int color = ColorStringToInt(colorString)	
-	SetModSettingInt(colorSetting, color)
-	
-	RefreshMenu()
+    int color = ColorStringToInt(colorString)    
+    SetModSettingInt(colorSetting, color)
+
+    RefreshMenu()
 
 endFunction
 
@@ -63,6 +62,14 @@ Event OnGameReload()
 	
 	OnConfigInit()
 	
+endEvent
+
+Event OnConfigOpen()
+
+	OnConfigInit()
+
+	OnMCMOpen()
+
 endEvent
 
 Event OnSettingChange(String a_ID)
