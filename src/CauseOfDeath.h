@@ -9,6 +9,7 @@ enum class SyncMode : std::uint8_t;
 class CauseOfDeathManager : public REX::Singleton<CauseOfDeathManager>
 {
 public:
+	void LoadFuckSettings();
 	void LoadMCMSettings(CSimpleIniA& a_ini);
 	void SyncSettings(CSimpleIniA& a_ini, SyncMode a_mode);
 

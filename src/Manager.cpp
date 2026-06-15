@@ -23,6 +23,28 @@ void Manager::CategorySettings::sync_settings(CSimpleIniA& a_ini, const char* a_
 	Settings::Visit(a_ini, textColor, a_section, "sTextColor", a_mode);
 }
 
+void Manager::CategorySettings::load_fuck_settings(bool a_hasColor)
+{
+	static const auto visKeys = ModAPIHandler::GetSingleton()->Translated(visibilityKeys);
+
+	int visValue = visibilityKills.underlying();
+	if (FUCK::Combo("$KF_VisibilityKills_Text"_T, &visValue, visKeys.data(), static_cast<int>(visKeys.size()))) {
+		visibilityKills = static_cast<Visibility>(visValue);
+	}
+	//FUCK::SetTooltip("$KF_VisibilityKills_Help"_T);
+
+	visValue = visibilityReanimation.underlying();
+	if (FUCK::Combo("$KF_VisibilityReanimation_Text"_T, &visValue, visKeys.data(), static_cast<int>(visKeys.size()))) {
+		visibilityReanimation = static_cast<Visibility>(visValue);
+	}
+	//FUCK::SetTooltip("$KF_VisibilityReanimation_Help"_T);
+
+	if (a_hasColor) {
+		FUCK::ColorEdit3("$KF_TextColor_Text"_T, &textColor.x);
+		//FUCK::SetTooltip("$KF_TextColor_Help"_T);
+	}
+}
+
 std::pair<bool, bool> Manager::CategorySettings::should_display(const RE::TESObjectREFRPtr& a_victim, EventType a_event) const
 {
 	const auto& visibility = (a_event == EventType::kKill) ? visibilityKills : visibilityReanimation;
@@ -72,6 +94,27 @@ void Manager::OnMCMClose()
 	inMCM.store(false, std::memory_order_relaxed);
 
 	Settings::GetSingleton()->SyncMCMToStyles();
+}
+
+void Manager::OnFUCKMenuOpen()
+{
+	FUCK::SetGameTimeFrozen(true);
+
+	inFUCK.store(true, std::memory_order_relaxed);
+	SetVisible(true);
+	if (killFeed.size() < 2) {
+		PushDummyData();
+	}
+}
+
+void Manager::OnFUCKMenuClose()
+{
+	killFeed.clear_dummy_data();
+	inFUCK.store(false, std::memory_order_relaxed);
+
+	Settings::GetSingleton()->SyncStylesAndMCM();
+
+	FUCK::SetGameTimeFrozen(false);
 }
 
 void Manager::LoadGenericSettings(CSimpleIniA& a_ini)
@@ -202,6 +245,137 @@ void Manager::LoadMCMScaledSettings()
 	ApplyScaledSettings();
 }
 
+void Manager::DrawFUCKNotificationsPage()
+{
+	if (FUCK::CollapsingHeader("$KF_General_Header"_T, ImGuiTreeNodeFlags_DefaultOpen)) {
+		FUCK::Indent();
+
+		FUCK::Checkbox("$KF_Debug_Text"_T, &enableDebug);
+		//FUCK::SetTooltip("$KF_Debug_Help"_T);
+
+		FUCK::SliderFloat("$KF_MaxDistance_Text"_T, &maxDistance, 0.0f, 10240.0f, "%.0f");
+		//FUCK::SetTooltip("$KF_MaxDistance_Help"_T);
+
+		FUCK::Unindent();
+	}
+
+	FUCK::Spacing();
+
+	for (std::size_t i = 0; i < categories.size(); ++i) {
+		if (FUCK::CollapsingHeader(FUCK::Translate(categorySettings[i]), ImGuiTreeNodeFlags_DefaultOpen)) {
+			FUCK::Indent();
+
+			FUCK::PushID(categoryNames[i]);
+
+			categories[i].load_fuck_settings(i != EventSource::kEnvironmental);
+
+			FUCK::PopID();
+
+			FUCK::Unindent();
+		}
+		FUCK::Spacing();
+	}
+}
+
+void Manager::DrawFUCKAppearancePage()
+{
+	if (FUCK::CollapsingHeader("$KF_Entries_Header"_T, ImGuiTreeNodeFlags_DefaultOpen)) {
+		FUCK::Indent();
+
+		int numEntriesAsInt = numEntries;
+		if (FUCK::SliderInt("$KF_NumEntries_Text"_T, &numEntriesAsInt, 1, 10)) {
+			numEntries = numEntriesAsInt;
+			killFeed.set_capacity(numEntries);
+		}
+		//FUCK::SetTooltip("$KF_NumEntries_Help"_T);
+
+		FUCK::Checkbox("$KF_ShowDistance_Text"_T, &format.showDistance);
+		//FUCK::SetTooltip("$KF_ShowDistance_Help"_T);
+
+		FUCK::Checkbox("$KF_ShowDirection_Text"_T, &format.showDirection);
+		//FUCK::SetTooltip("$KF_ShowDirection_Help"_T);
+
+		if (FUCK::SliderFloat("$KF_VerticalSpacing_Text"_T, &verticalSpacingMult, 0.0f, 10.0f, "%.2f")) {
+			UpdateVerticalSpacing();
+		}
+		//FUCK::SetTooltip("$KF_VerticalSpacing_Help"_T);
+
+		FUCK::Checkbox("$KF_ShowBackground_Text"_T, &format.showBackground);
+		//FUCK::SetTooltip("$KF_ShowBackground_Help"_T);
+
+		FUCK::Unindent();
+	}
+
+	if (FUCK::CollapsingHeader("$KF_Text_Header"_T, ImGuiTreeNodeFlags_DefaultOpen)) {
+		FUCK::Indent();
+
+		FUCK::ColorEdit3("$KF_DefaultTextColor_Text"_T, &textColor.x);
+		//FUCK::SetTooltip("$KF_DefaultTextColor_Help"_T);
+
+		FUCK::SliderFloat("$KF_TextSize_Text"_T, &fontSize.value, 1.f, 100.f, "%.0f");
+		//FUCK::SetTooltip("$KF_TextSize_Help"_T);
+
+		FUCK::Unindent();
+	}
+
+	if (FUCK::CollapsingHeader("$KF_Icons_Header"_T, ImGuiTreeNodeFlags_DefaultOpen)) {
+		FUCK::Indent();
+
+		FUCK::Checkbox("$KF_IconTintOverride_Text"_T, &enableIconTintOverride);
+		//FUCK::SetTooltip("$KF_IconTintOverride_Help"_T);
+
+		FUCK::ColorEdit3("$KF_IconTint_Text"_T, &iconTint.x);
+		//FUCK::SetTooltip("$KF_IconTint_Help"_T);
+
+		CauseOfDeathManager::GetSingleton()->LoadFuckSettings();  // icon scale
+
+		FUCK::Checkbox("$KF_SingleIcon_Text"_T, &singleIcon);
+		//FUCK::SetTooltip("$KF_SingleIcon_Help"_T);
+
+		FUCK::Unindent();
+	}
+
+	if (FUCK::CollapsingHeader("$KF_Background_Header"_T, ImGuiTreeNodeFlags_DefaultOpen)) {
+		FUCK::Indent();
+
+		FUCK::ColorEdit4("$KF_BackgroundColor_Text"_T, &format.backgroundColor.x);
+		//FUCK::SetTooltip("$KF_BackgroundColor_Help"_T);
+
+		static auto translatedFadeKeys = ModAPIHandler::GetSingleton()->Translated(fadeKeys);
+
+		int fadeValue = format.backgroundFade.underlying();
+		if (FUCK::Combo("$KF_BackgroundFade_Text"_T, &fadeValue, translatedFadeKeys.data(), static_cast<int>(translatedFadeKeys.size()))) {
+			format.backgroundFade = static_cast<Format::BackgroundFade>(fadeValue);
+		}
+		//FUCK::SetTooltip("$KF_BackgroundFade_Help"_T);
+
+		FUCK::Unindent();
+	}
+}
+
+void Manager::DrawFUCKLayoutPage()
+{
+	if (FUCK::CollapsingHeader("$KF_Window_Header"_T, ImGuiTreeNodeFlags_DefaultOpen)) {
+		FUCK::Indent();
+
+		FUCK::SliderFloat("$KF_PosX_Text"_T, &posX.value, 0.f, 3840.f, "%.0f");
+		//FUCK::SetTooltip("$KF_PosX_Help"_T);
+
+		FUCK::SliderFloat("$KF_PosY_Text"_T, &posY.value, 0.f, 2160.f, "%.0f");
+		//FUCK::SetTooltip("$KF_PosY_Help"_T);
+
+		FUCK::SliderFloat("$KF_Width_Text"_T, &width.value, 50.f, 3840.f, "%.0f");
+		//FUCK::SetTooltip("$KF_Width_Help"_T);
+
+		FUCK::SliderFloat("$KF_Height_Text"_T, &height.value, 50.f, 2160.f, "%.0f");
+		//FUCK::SetTooltip("$KF_Height_Help"_T);
+
+		FUCK::Unindent();
+	}
+
+	killFeed.load_fuck_settings();
+}
+
 void Manager::ApplyGenericSettings(bool a_oldDebugValue)
 {
 	killFeed.set_capacity(numEntries);
@@ -299,7 +473,7 @@ void Manager::Draw()
 				auto finalOffset = data.primaryCause == CAUSE_OF_DEATH::kRaiseZombie ? -offset : offset;
 				ImGui::SetCursorScreenPos(ImGui::GetCursorScreenPos() + finalOffset);
 
-				data.Draw(format, inMCM.load(std::memory_order::relaxed), singleIcon);
+				data.Draw(format, inMCM.load(std::memory_order::relaxed) || inFUCK.load(std::memory_order::relaxed), singleIcon);
 			}
 			ImGui::PopStyleColor();
 			ImGui::PopStyleVar();

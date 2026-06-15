@@ -9,9 +9,14 @@ void ScaledSetting::apply_scale(const char* a_key, float a_resolutionScale)
 {
 	if (numeric::essentially_equal(value, -1.234567f)) {
 		logger::info("Applying resolution scale {} to setting {} with base value {}", a_resolutionScale, a_key, baseValue);
-		value = baseValue * a_resolutionScale;
-		Settings::PushMCMVar(a_key, value);
+		set(a_key, baseValue * a_resolutionScale);
 	}
+}
+
+void ScaledSetting::set(const char* a_key, float a_newValue)
+{
+	value = a_newValue;
+	Settings::PushMCMVar(a_key, value);
 }
 
 void Settings::SerializeINI(const wchar_t* a_path, const INIFunc& a_func, bool a_generate)
@@ -92,8 +97,7 @@ bool Settings::IsStylesIniNewerThanMCM() const
 
 void Settings::SyncMCMToStyles() const
 {
-	Load(
-		FileType::kStyles, [this](auto& a_ini) { schema(a_ini, SyncMode::WriteToStyles); }, true);
+	Save(FileType::kStyles, [this](auto& a_ini) { schema(a_ini, SyncMode::WriteToStyles); });
 }
 
 bool Settings::SyncStylesToMCMIfNewer()
@@ -114,4 +118,17 @@ bool Settings::SyncStylesToMCMIfNewer()
 	});
 
 	return true;
+}
+
+void Settings::SyncStylesAndMCM()
+{
+	logger::info("Syncing styles.ini and MCM settings");
+	
+	Save(FileType::kStyles, [this](auto& a_ini) {
+		schema(a_ini, SyncMode::WriteToStyles);
+	});
+
+	Save(FileType::kMCM, [this](auto& a_ini) {
+		schema(a_ini, SyncMode::PushToMCM);
+	});
 }

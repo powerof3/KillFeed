@@ -6,6 +6,7 @@
 class KillFeed
 {
 public:
+	void load_fuck_settings();
 	void load_mcm_settings(CSimpleIniA& a_ini);
 	void load_scaled_settings(CSimpleIniA& a_ini);
 	void apply_scaled_settings(float a_resolutionScale);
