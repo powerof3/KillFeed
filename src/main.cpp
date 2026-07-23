@@ -39,7 +39,6 @@ void OnInit(SKSE::MessagingInterface::Message* a_msg)
 			const auto manager = Manager::GetSingleton();
 
 			manager->OnDataLoad();
-			ModAPIHandler::GetSingleton()->OnDataLoad();
 			Debug::Install();
 		}
 		break;

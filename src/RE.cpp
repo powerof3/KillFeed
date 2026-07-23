@@ -45,4 +45,24 @@ namespace RE
 			view->Invoke("Selection.setSelection", nullptr, args, 2);
 		}
 	}
+
+	std::string GetNPCName(const TESObjectREFRPtr& a_actor)
+	{
+		if (const auto base = a_actor->GetBaseObject()) {
+			BSString tmp;
+			if (base->GetActivateText(a_actor.get(), tmp) && !tmp.empty()) {
+				std::string text{ tmp };
+				const auto  pos = text.find('\n');
+				return pos != std::string_view::npos ?
+				           text.substr(pos + 1) :
+				           text;
+			}
+		}
+
+		if (auto display = a_actor->GetDisplayFullName(); !string::is_empty(display)) {
+			return display;
+		}
+
+		return a_actor->GetName();
+	}
 }

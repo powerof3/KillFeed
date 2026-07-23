@@ -20,43 +20,6 @@ void ModAPIHandler::DisplayTweaks::LoadSettings()
 	});
 }
 
-void ModAPIHandler::NND::GetAPI()
-{
-	logger::info("Retrieving NPCs Names Distributor API...");
-	api = reinterpret_cast<NND_API::IVNND2*>(NND_API::RequestPluginAPI());
-	if (api) {
-		logger::info("\tNPCs Names Distributor API is up to date!");
-	} else {
-		logger::info("\tUnable to acquire NPCs Names Distributor API");
-	}
-}
-
-std::string ModAPIHandler::NND::GetReferenceName(RE::TESObjectREFR* a_ref) const
-{
-	if (!a_ref) {
-		return {};
-	}
-
-	std::string name;
-
-	if (api) {
-		if (auto actor = a_ref->As<RE::Actor>()) {
-			if (auto nndName = api->GetName(actor, NND_API::NameContext::kEnemyHUD); !nndName.empty()) {
-				name = { nndName.data(), nndName.size() };
-			}
-		}
-	}
-
-	if (name.empty()) {
-		name = a_ref->GetDisplayFullName();
-		if (name.empty()) {  // FEC blanks out display name for frozen corpses
-			name = a_ref->GetName();
-		}
-	}
-
-	return name;
-}
-
 void ModAPIHandler::FUCKTool::OnClose()
 {
 	Manager::GetSingleton()->OnFUCKMenuClose();
@@ -95,8 +58,6 @@ void ModAPIHandler::LoadModSettings()
 
 void ModAPIHandler::LoadAPIs()
 {
-	nnd.GetAPI();
-
 	if (FUCK::Connect(fuckTool.PluginName())) {
 		FUCK::RegisterTool(&fuckTool);
 		logger::info("Kill Feed FUCK Menu registered");
@@ -105,21 +66,7 @@ void ModAPIHandler::LoadAPIs()
 	}
 }
 
-void ModAPIHandler::OnDataLoad()
-{
-	nnd.usesEnglish = ("sLanguage:General"_ini == RE::FixedStrings::GetSingleton()->english);
-}
-
 float ModAPIHandler::GetResolutionScale() const
 {
 	return displayTweaks.GetResolutionScale();
-}
-
-std::string ModAPIHandler::GetReferenceName(const RE::TESObjectREFRPtr& a_ref, const RE::ActorPtr& a_commander) const
-{
-	if (a_commander) {
-		return std::format("{}{}{}", nnd.GetReferenceName(a_commander.get()), nnd.usesEnglish ? "'s " : " - ", nnd.GetReferenceName(a_ref.get()));
-	} else {
-		return nnd.GetReferenceName(a_ref.get());
-	}
 }

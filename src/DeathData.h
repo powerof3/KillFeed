@@ -58,7 +58,7 @@ struct DeathData
 		explicit operator bool() const { return !name.empty(); }
 
 		const std::string& get_name() { return name; }
-		void               set_name(const RE::TESObjectREFRPtr& a_ref, const RE::ActorPtr& a_commander = nullptr);
+		void               set_name(const RE::TESObjectREFRPtr& a_ref);
 		void               update_color();
 
 		bool Draw(ImDrawList* a_drawList, float a_posY, float a_entryH, float a_textH) const;
@@ -105,7 +105,7 @@ struct DeathData
 	};
 
 	DeathData() = default;
-	DeathData(const RE::TESObjectREFRPtr& a_victim, const RE::TESObjectREFRPtr& a_killer, float a_distance, CAUSE_OF_DEATH a_primaryCause, std::optional<CAUSE_OF_DEATH> a_secondaryCause = std::nullopt, const RE::ActorPtr& a_victimCommander = nullptr);
+	DeathData(const RE::TESObjectREFRPtr& a_victim, const RE::TESObjectREFRPtr& a_killer, float a_distance, CAUSE_OF_DEATH a_primaryCause, std::optional<CAUSE_OF_DEATH> a_secondaryCause = std::nullopt);
 	DeathData(EventSource a_victimSource, EventSource a_killerSource, CAUSE_OF_DEATH a_cause, std::optional<CAUSE_OF_DEATH> a_secondaryCause = std::nullopt);
 	DeathData(const char* a_victimName, const char* a_killerName, CAUSE_OF_DEATH a_cause, std::optional<CAUSE_OF_DEATH> a_secondaryCause = std::nullopt);
 

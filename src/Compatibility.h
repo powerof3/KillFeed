@@ -1,7 +1,6 @@
 #pragma once
 
 #include "API/FUCK_API.h"
-#include "API/NND_API.h"
 
 enum EventSource : std::uint8_t;
 
@@ -22,15 +21,6 @@ public:
 		bool  borderlessUpscale{ false };
 	};
 
-	struct NND
-	{
-		void        GetAPI();
-		std::string GetReferenceName(RE::TESObjectREFR* a_ref) const;
-
-		NND_API::IVNND2* api{};
-		bool             usesEnglish{ false };
-	};
-
 	struct FUCKTool : FUCK::ITool
 	{
 		const char*               PluginName() const override { return "KillFeed"; }
@@ -44,10 +34,7 @@ public:
 	void LoadModSettings();
 	void LoadAPIs();
 
-	void OnDataLoad();
-
-	float       GetResolutionScale() const;
-	std::string GetReferenceName(const RE::TESObjectREFRPtr& a_ref, const RE::ActorPtr& a_commander = nullptr) const;
+	float GetResolutionScale() const;
 
 	template <std::size_t N>
 	std::vector<const char*> Translated(const std::array<const char*, N>& a_keys)
@@ -61,7 +48,6 @@ public:
 	}
 
 	DisplayTweaks displayTweaks;
-	NND           nnd;
 	FUCKTool      fuckTool;
 
 	static ModAPIHandler instance;

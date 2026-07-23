@@ -53,9 +53,9 @@ DeathData::Combatant::Combatant(EventSource a_type, std::string a_name) :
 	update_color();
 }
 
-void DeathData::Combatant::set_name(const RE::TESObjectREFRPtr& a_ref, const RE::ActorPtr& a_commander)
+void DeathData::Combatant::set_name(const RE::TESObjectREFRPtr& a_ref)
 {
-	name = ModAPIHandler::GetSingleton()->GetReferenceName(a_ref, a_commander);
+	name = RE::GetNPCName(a_ref);
 }
 
 void DeathData::Combatant::update_color()
@@ -94,7 +94,7 @@ void DeathData::Icon::Draw(float a_posY, float a_entryH) const
 	texture->ButtonIcon(a_posY, a_entryH, iconTint);
 }
 
-DeathData::DeathData(const RE::TESObjectREFRPtr& a_victim, const RE::TESObjectREFRPtr& a_killer, float a_distance, CAUSE_OF_DEATH a_primaryCause, std::optional<CAUSE_OF_DEATH> a_secondaryCause, const RE::ActorPtr& a_victimCommander) :
+DeathData::DeathData(const RE::TESObjectREFRPtr& a_victim, const RE::TESObjectREFRPtr& a_killer, float a_distance, CAUSE_OF_DEATH a_primaryCause, std::optional<CAUSE_OF_DEATH> a_secondaryCause) :
 	primaryCause(a_primaryCause),
 	killer(Manager::GetEventSourceType(a_killer)),
 	victim(Manager::GetEventSourceType(a_victim)),
@@ -105,12 +105,10 @@ DeathData::DeathData(const RE::TESObjectREFRPtr& a_victim, const RE::TESObjectRE
 	}
 
 	if (a_killer) {
-		auto killerActor = a_killer->As<RE::Actor>();
-		auto commander = killerActor ? RE::ActorPtr{ killerActor->GetCommandingActor() } : nullptr;
-		killer.set_name(a_killer, commander);
+		killer.set_name(a_killer);
 	}
 
-	victim.set_name(a_victim, a_victimCommander);
+	victim.set_name(a_victim);
 
 	cache_compass_angle(a_victim);
 

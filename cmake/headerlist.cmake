@@ -1,6 +1,5 @@
 set(headers ${headers}
 	src/API/FUCK_API.h
-	src/API/NND_API.h
 	src/CauseOfDeath.h
 	src/CauseOfDeathEnum.h
 	src/Compatibility.h

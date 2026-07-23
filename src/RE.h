@@ -18,8 +18,9 @@ namespace RE
 		DispatchStaticCall(a_class, a_fnName, callback, std::forward<Args>(a_args)...);
 	}
 
-	float GetHeadingAngleFromPlayer(const TESObjectREFRPtr& a_victim);
-	void  SetActiveTextInputMaxChars();
+	float       GetHeadingAngleFromPlayer(const TESObjectREFRPtr& a_victim);
+	void        SetActiveTextInputMaxChars();
+	std::string GetNPCName(const TESObjectREFRPtr& a_actor);
 
 	struct FormLogger
 	{

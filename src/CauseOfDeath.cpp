@@ -719,7 +719,7 @@ std::pair<DeathData, RE::TESObjectREFRPtr> CauseOfDeathManager::CreateDeathData(
 		primaryCause = CAUSE_OF_DEATH::kGeneric;
 	}
 
-	auto deathData = DeathData(a_victim, actualKiller, a_distance, *primaryCause, secondaryCause, victimCommanderActor);
+	auto deathData = DeathData(a_victim, actualKiller, a_distance, *primaryCause, secondaryCause);
 
 	logger::debug("Primary Cause: {} ({})", static_cast<std::uint32_t>(*primaryCause), glz::get_enum_name(*primaryCause));
 	logger::debug("Secondary Cause: {} ({})", secondaryCause ? static_cast<std::int32_t>(*secondaryCause) : -1, secondaryCause ? glz::get_enum_name(*secondaryCause) : "None");
