@@ -21,9 +21,8 @@ public:
 		bool  borderlessUpscale{ false };
 	};
 
-	struct FUCKTool : FUCK::ITool
+	struct FUCKTool : public FUCK::ITool
 	{
-		const char*               PluginName() const override { return "KillFeed"; }
 		[[nodiscard]] const char* Name() const override { return "$KF_KillFeed"_T; }
 		void                      OnClose() override;
 		void                      OnOpen() override;

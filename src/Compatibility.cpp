@@ -58,7 +58,7 @@ void ModAPIHandler::LoadModSettings()
 
 void ModAPIHandler::LoadAPIs()
 {
-	if (FUCK::Connect(fuckTool.PluginName())) {
+	if (FUCK::Connect("KillFeed")) {
 		FUCK::RegisterTool(&fuckTool);
 		logger::info("Kill Feed FUCK Menu registered");
 	} else {

@@ -7,11 +7,13 @@ void KillFeed::load_fuck_settings()
 
 		if (FUCK::SliderFloat("$KF_FadeInTime_Text"_T, &fadeInTime, 0.f, 10.f, "%.2f")) {
 			fadeOutStartTime = fadeInTime + lifeTime;
+			maxDuration = fadeOutStartTime + fadeOutTime;
 		}
 		//FUCK::SetTooltip("$KF_FadeInTime_Help"_T);
 
 		if (FUCK::SliderFloat("$KF_LifeTime_Text"_T, &lifeTime, 0.1f, 10.f, "%.2f")) {
 			fadeOutStartTime = fadeInTime + lifeTime;
+			maxDuration = fadeOutStartTime + fadeOutTime;
 		}
 		//FUCK::SetTooltip("$KF_LifeTime_Help"_T);
 
