@@ -105,6 +105,9 @@ CauseOfDeathManager::HitSource CauseOfDeathManager::GetWeaponSource(const RE::TE
 				if (auto commandedActor = srcActor->GetCommandingActor()) {
 					return commandedActor == a_killer;
 				}
+				if (srcActor->IsPlayerTeammate()) {
+					return a_killer && a_killer->IsPlayerRef();	
+				}
 			} else {
 				if (auto baseObj = hitSrc.src->GetBaseObject(); baseObj && baseObj->IsAmmo()) {
 					auto actorCause = hitSrc.src->GetActorCause();
