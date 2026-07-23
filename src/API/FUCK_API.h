@@ -1535,8 +1535,8 @@ namespace FUCK
 
 		[[nodiscard]] bool        IsLoaded() const { return _handle != nullptr; }
 		[[nodiscard]] ImTextureID GetID() const { return (ImTextureID)_handle; }
-								  operator ImTextureID() const { return (ImTextureID)_handle; }
-								  operator void*() const { return _handle; }
+		operator ImTextureID() const { return (ImTextureID)_handle; }
+		operator void*() const { return _handle; }
 
 		[[nodiscard]] float  GetWidth() const { return _width; }
 		[[nodiscard]] float  GetHeight() const { return _height; }
