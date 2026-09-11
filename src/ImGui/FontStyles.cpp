@@ -32,11 +32,11 @@ namespace ImGui
 		auto&        io = ImGui::GetIO();
 
 		if (UsingDefaultFont()) {
-			logger::info("Using default font...");
+			REX::INFO("Using default font...");
 			config.GlyphExtraAdvanceX = 1.0f;
 			primaryFont.font = io.Fonts->AddFontFromMemoryCompressedTTF(BSFont_Data, BSFont_Size, 0.0f, &config);
 		} else {
-			logger::info("Using config font...");
+			REX::INFO("Using config font...");
 			primaryFont.LoadFont(config);
 		}
 		config.MergeMode = true;
@@ -74,7 +74,7 @@ namespace ImGui
 	std::optional<ImVec4> FontStyles::LoadColor(CSimpleIniA& a_ini, const char* a_section, const char* a_key)
 	{
 		std::string colorStr;
-		ini::get_value(a_ini, colorStr, a_section, a_key);
+		stl::get_value(a_ini, colorStr, a_section, a_key);
 		if (!colorStr.empty()) {
 			return ToVar<ImVec4>(colorStr).first;
 		}

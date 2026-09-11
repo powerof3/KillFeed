@@ -26,7 +26,7 @@ namespace Debug
 				function->executeFunction = &T::Execute;
 				function->conditionFunction = nullptr;
 
-				logger::info("Installed {} console command", T::LONG_NAME);
+				REX::INFO("Installed {} console command", T::LONG_NAME);
 			}
 		}
 	};

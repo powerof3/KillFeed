@@ -2,13 +2,13 @@
 
 void ScaledSetting::load(CSimpleIniA& a_ini, const char* a_section, const char* a_key)
 {
-	ini::get_value(a_ini, value, a_section, a_key);
+	stl::get_value(a_ini, value, a_section, a_key);
 }
 
 void ScaledSetting::apply_scale(const char* a_key, float a_resolutionScale)
 {
-	if (numeric::essentially_equal(value, -1.234567f)) {
-		logger::info("Applying resolution scale {} to setting {} with base value {}", a_resolutionScale, a_key, baseValue);
+	if (REX::FLT::ESSENTIALLY_EQUAL(value, -1.234567f)) {
+		REX::INFO("Applying resolution scale {} to setting {} with base value {}", a_resolutionScale, a_key, baseValue);
 		set(a_key, baseValue * a_resolutionScale);
 	}
 }
@@ -103,11 +103,11 @@ void Settings::SyncMCMToStyles() const
 bool Settings::SyncStylesToMCMIfNewer()
 {
 	if (!IsStylesIniNewerThanMCM()) {
-		logger::info("MCM settings is newer than styles.ini. Syncing MCM to styles");
+		REX::INFO("MCM settings is newer than styles.ini. Syncing MCM to styles");
 		return false;
 	}
 
-	logger::info("styles.ini is newer than MCM settings. Syncing styles to MCM");
+	REX::INFO("styles.ini is newer than MCM settings. Syncing styles to MCM");
 
 	Load(FileType::kStyles, [this](auto& a_ini) {
 		schema(a_ini, SyncMode::ReadFromStyles);
@@ -122,7 +122,7 @@ bool Settings::SyncStylesToMCMIfNewer()
 
 void Settings::SyncStylesAndMCM()
 {
-	logger::info("Syncing styles.ini and MCM settings");
+	REX::INFO("Syncing styles.ini and MCM settings");
 
 	Save(FileType::kStyles, [this](auto& a_ini) {
 		schema(a_ini, SyncMode::WriteToStyles);

@@ -5,16 +5,18 @@
 #include "ImGui/FontStyles.h"
 #include "Settings.h"
 
+#include "spdlog/spdlog.h"
+
 void Manager::CategorySettings::load_mcm_settings(CSimpleIniA& a_ini, const char* a_section)
 {
 	ImGui::LoadColor(a_ini, textColor, a_section, "sTextColor");
 
 	auto visValue = visibilityKills.underlying();
-	ini::get_value(a_ini, visValue, a_section, "iVisibilityKills");
+	stl::get_value(a_ini, visValue, a_section, "iVisibilityKills");
 	visibilityKills = static_cast<Visibility>(visValue);
 
 	visValue = visibilityReanimation.underlying();
-	ini::get_value(a_ini, visValue, a_section, "iVisibilityReanimation");
+	stl::get_value(a_ini, visValue, a_section, "iVisibilityReanimation");
 	visibilityReanimation = static_cast<Visibility>(visValue);
 }
 
@@ -119,12 +121,12 @@ void Manager::OnFUCKMenuClose()
 
 void Manager::LoadGenericSettings(CSimpleIniA& a_ini)
 {
-	ini::get_value(a_ini, enableDebug, "KillFeed", "bDebug");
-	ini::get_value(a_ini, maxDistance, "KillFeed", "fMaxDistance");
-	ini::get_value(a_ini, numEntries, "Entries", "iNumEntries");
-	ini::get_value(a_ini, verticalSpacingMult, "Entries", "fVerticalSpacing");
-	ini::get_value(a_ini, enableIconTintOverride, "Icons", "bIconTintOverride");
-	ini::get_value(a_ini, singleIcon, "Icons", "bSingleIcon");
+	stl::get_value(a_ini, enableDebug, "KillFeed", "bDebug");
+	stl::get_value(a_ini, maxDistance, "KillFeed", "fMaxDistance");
+	stl::get_value(a_ini, numEntries, "Entries", "iNumEntries");
+	stl::get_value(a_ini, verticalSpacingMult, "Entries", "fVerticalSpacing");
+	stl::get_value(a_ini, enableIconTintOverride, "Icons", "bIconTintOverride");
+	stl::get_value(a_ini, singleIcon, "Icons", "bSingleIcon");
 
 	killFeed.load_mcm_settings(a_ini);
 	format.load_generic_settings(a_ini);
@@ -383,7 +385,7 @@ void Manager::ApplyGenericSettings(bool a_oldDebugValue)
 	if (a_oldDebugValue != enableDebug) {
 		auto level = enableDebug ? spdlog::level::debug : spdlog::level::info;
 		spdlog::set_level(level);
-		spdlog::flush_on(level);
+		spdlog::flush_on(level); 
 	}
 
 	UpdateVerticalSpacing();
@@ -419,14 +421,14 @@ void Manager::LoadIconTintOverrides()
 		std::string buffer;
 		auto        ec = glz::read_file_json(iconTintOverrides, jsonPath.string(), buffer);
 		if (ec) {
-			logger::info("Failed to read icon tint override file (error: {})", glz::format_error(ec, buffer));
+			REX::INFO("Failed to read icon tint override file (error: {})", glz::format_error(ec, buffer));
 		}
 	} else {
-		logger::info("Failed to load icon tint overrides file (error: {})", err.message());
+		REX::INFO("Failed to load icon tint overrides file (error: {})", err.message());
 	}
 
 	for (auto& [cause, tint] : iconTintOverrides) {
-		logger::info("Loaded icon tint override for cause {}: ({})", glz::get_enum_name(cause), ImGui::FontStyles::ToString(tint, true));
+		REX::INFO("Loaded icon tint override for cause {}: ({})", glz::get_enum_name(cause), ImGui::FontStyles::ToString(tint, true));
 	}
 }
 

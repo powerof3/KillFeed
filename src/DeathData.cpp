@@ -8,12 +8,12 @@
 
 void Format::load_generic_settings(CSimpleIniA& a_ini)
 {
-	ini::get_value(a_ini, showDistance, "Entries", "bShowDistance");
-	ini::get_value(a_ini, showDirection, "Entries", "bShowDirection");
-	ini::get_value(a_ini, showBackground, "Entries", "bShowBg");
+	stl::get_value(a_ini, showDistance, "Entries", "bShowDistance");
+	stl::get_value(a_ini, showDirection, "Entries", "bShowDirection");
+	stl::get_value(a_ini, showBackground, "Entries", "bShowBg");
 
 	auto bgFade = backgroundFade.underlying();
-	ini::get_value(a_ini, bgFade, "Background", "iBgFade");
+	stl::get_value(a_ini, bgFade, "Background", "iBgFade");
 	backgroundFade = static_cast<BackgroundFade>(bgFade);
 }
 
@@ -31,7 +31,7 @@ void Format::sync_settings(CSimpleIniA& a_ini, SyncMode a_mode)
 void Format::load_color_settings(CSimpleIniA& a_ini)
 {
 	ImGui::LoadColor(a_ini, backgroundColor, "Background", "sBgColor");
-	ini::get_value(a_ini, backgroundColor.w, "Background", "fBgAlpha");
+	stl::get_value(a_ini, backgroundColor.w, "Background", "fBgAlpha");
 }
 
 void Format::sync_color_settings(CSimpleIniA& a_ini, SyncMode a_mode)
@@ -65,7 +65,7 @@ void DeathData::Combatant::update_color()
 
 bool DeathData::Combatant::Draw(ImDrawList* a_drawList, float a_posY, float a_entryH, float a_textH) const
 {
-	if (name.empty() || string::is_only_space(name)) {
+	if (name.empty() || REX::STR::IS_ONLY_SPACE(name)) {
 		return false;
 	}
 

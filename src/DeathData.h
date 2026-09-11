@@ -43,7 +43,7 @@ struct Format
 	bool                                       showDistance{ true };
 	bool                                       showDirection{ true };
 	bool                                       showBackground{ true };
-	REX::EnumSet<BackgroundFade, std::uint8_t> backgroundFade;
+	REX::TEnumSet<BackgroundFade, std::uint8_t> backgroundFade;
 };
 
 struct DeathData
@@ -123,8 +123,8 @@ struct DeathData
 	// members
 	Icon                              primaryCause{};
 	std::optional<Icon>               secondaryCause{};
-	REX::EnumSet<Flags, std::uint8_t> flags{ Flags::kNone };
-	REX::Enum<IconMode, std::uint8_t> iconMode{ IconMode::kBoth };
+	REX::TEnumSet<Flags, std::uint8_t> flags{ Flags::kNone };
+	REX::TEnum<IconMode, std::uint8_t> iconMode{ IconMode::kBoth };
 	Combatant                         victim{};
 	Combatant                         killer{};
 	std::string                       distance{};

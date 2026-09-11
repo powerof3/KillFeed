@@ -48,7 +48,7 @@ namespace Papyrus
 		a_vm->RegisterFunction("LoadMCMScaledSettings", MCM, LoadMCMScaledSettings);
 		a_vm->RegisterFunction("LoadMCMGenericSettings", MCM, LoadMCMGenericSettings);
 
-		logger::info("Registered {} class", MCM);
+		REX::INFO("Registered {} class", MCM);
 
 		return true;
 	}

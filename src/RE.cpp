@@ -59,7 +59,7 @@ namespace RE
 			}
 		}
 
-		if (auto display = a_actor->GetDisplayFullName(); !string::is_empty(display)) {
+		if (auto display = a_actor->GetDisplayFullName(); !REX::STR::IS_EMPTY(display)) {
 			return display;
 		}
 

@@ -13,8 +13,10 @@ namespace Hooks
 			{
 				func(a_targetProcess, a_hitData);
 
-				if (a_hitData.flags.any(RE::HitData::Flag::kFatal) && a_hitData.target.get()) {
-					CauseOfDeathManager::GetSingleton()->InsertIntoHitMap(a_hitData);
+				if (a_hitData.flags.any(RE::HitData::Flag::kFatal)) {
+					if (a_hitData.target.get()) {
+						CauseOfDeathManager::GetSingleton()->InsertIntoHitMap(a_hitData);
+					}
 				}
 			}
 #else
@@ -107,7 +109,7 @@ namespace Hooks
 						"BookMode"sv,
 						"JournalMode"sv
 					};
-					if (std::ranges::any_of(badModes, [&](const auto& a_mode) { return string::iequals(hudData->text, a_mode); })) {
+					if (std::ranges::any_of(badModes, [&](const auto& a_mode) { return REX::STR::IEQUALS(hudData->text, a_mode); })) {
 						Manager::GetSingleton()->SetVisible(!hudData->show);
 					}
 				}

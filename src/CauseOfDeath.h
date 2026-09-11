@@ -6,7 +6,7 @@
 
 enum class SyncMode : std::uint8_t;
 
-class CauseOfDeathManager : public REX::Singleton<CauseOfDeathManager>
+class CauseOfDeathManager : public REX::TSingleton<CauseOfDeathManager>
 {
 public:
 	void LoadFuckSettings();

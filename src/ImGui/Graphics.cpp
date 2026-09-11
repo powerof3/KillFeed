@@ -23,7 +23,7 @@ namespace ImGui
 				image->GetMetadata(),
 				targetWidth,
 				targetHeight,
-				DirectX::TEX_FILTER_TRIANGLE,
+				DirectX::TEX_FILTER_FANT,
 				*resizedImage);
 			if (SUCCEEDED(hr)) {
 				ComPtr<ID3D11Resource> pTexture{};

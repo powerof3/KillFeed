@@ -48,7 +48,8 @@ namespace Debug
 				std::uint64_t seed = initialSeed;
 				boost::hash_combine(seed, static_cast<std::uint64_t>(index));
 
-				auto npcIdx = clib_util::RNG(seed).generate<std::size_t>(0, npcs.size() - 1);
+				auto rng = REX::TRandom<std::size_t>(seed);
+				auto npcIdx = rng.Generate(0, npcs.size() - 1);
 				auto npc = vec[npcIdx];
 
 				vec[npcIdx] = vec.back();
@@ -107,7 +108,7 @@ namespace Debug
 
 	void Install()
 	{
-		logger::info("{:*^50}", "DEBUG");
+		REX::INFO("{:*^50}", "DEBUG");
 		ConsoleCommandHandler<SpawnNPCs>::Install();
 	}
 }

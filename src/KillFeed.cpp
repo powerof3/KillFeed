@@ -34,9 +34,9 @@ void KillFeed::load_fuck_settings()
 
 void KillFeed::load_mcm_settings(CSimpleIniA& a_ini)
 {
-	ini::get_value(a_ini, fadeInTime, "Animation", "fFadeInTime");
-	ini::get_value(a_ini, lifeTime, "Animation", "fLifeTime");
-	ini::get_value(a_ini, fadeOutTime, "Animation", "fFadeOutTime");
+	stl::get_value(a_ini, fadeInTime, "Animation", "fFadeInTime");
+	stl::get_value(a_ini, lifeTime, "Animation", "fLifeTime");
+	stl::get_value(a_ini, fadeOutTime, "Animation", "fFadeOutTime");
 
 	load_scaled_settings(a_ini);
 

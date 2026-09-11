@@ -47,7 +47,7 @@ namespace RE
 }
 
 template <>
-struct fmt::formatter<RE::FormLogger>
+struct std::formatter<RE::FormLogger>
 {
 	template <class ParseContext>
 	constexpr auto parse(ParseContext& a_ctx)

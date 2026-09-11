@@ -18,7 +18,7 @@ namespace ImGui
 		float  frameRounding{ 0.0f };
 	};
 
-	class FontStyles : public REX::Singleton<FontStyles>
+	class FontStyles : public REX::TSingleton<FontStyles>
 	{
 	public:
 		void LoadStyleSettings(CSimpleIniA& a_ini);
@@ -50,12 +50,12 @@ namespace ImGui
 	std::pair<T, bool> FontStyles::ToVar(const std::string& a_str)
 	{
 		if constexpr (std::is_same_v<ImVec4, T> || std::is_same_v<std::int32_t, T>) {
-			static srell::regex rgb_pattern_rgba("([0-9]+),([0-9]+),([0-9]+),([0-9]+)");
-			static srell::regex rgb_pattern_rgb("([0-9]+),([0-9]+),([0-9]+)");
-			static srell::regex hex_pattern_rgba("#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})");
-			static srell::regex hex_pattern_rgb("#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})");
+			static boost::regex rgb_pattern_rgba("([0-9]+),([0-9]+),([0-9]+),([0-9]+)");
+			static boost::regex rgb_pattern_rgb("([0-9]+),([0-9]+),([0-9]+)");
+			static boost::regex hex_pattern_rgba("#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})");
+			static boost::regex hex_pattern_rgb("#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})");
 
-			srell::smatch m;
+			boost::smatch m;
 
 			std::uint32_t r = 0;
 			std::uint32_t g = 0;
@@ -65,28 +65,28 @@ namespace ImGui
 			bool isHex = false;
 			bool matched = false;
 
-			if (srell::regex_match(a_str, m, rgb_pattern_rgba)) {
-				r = string::to_num<std::uint32_t>(m[1]);
-				g = string::to_num<std::uint32_t>(m[2]);
-				b = string::to_num<std::uint32_t>(m[3]);
-				a = string::to_num<std::uint32_t>(m[4]);
+			if (boost::regex_match(a_str, m, rgb_pattern_rgba)) {
+				r = REX::STR::TO_NUM<std::uint32_t>(m[1]);
+				g = REX::STR::TO_NUM<std::uint32_t>(m[2]);
+				b = REX::STR::TO_NUM<std::uint32_t>(m[3]);
+				a = REX::STR::TO_NUM<std::uint32_t>(m[4]);
 				matched = true;
-			} else if (srell::regex_match(a_str, m, rgb_pattern_rgb)) {
-				r = string::to_num<std::uint32_t>(m[1]);
-				g = string::to_num<std::uint32_t>(m[2]);
-				b = string::to_num<std::uint32_t>(m[3]);
+			} else if (boost::regex_match(a_str, m, rgb_pattern_rgb)) {
+				r = REX::STR::TO_NUM<std::uint32_t>(m[1]);
+				g = REX::STR::TO_NUM<std::uint32_t>(m[2]);
+				b = REX::STR::TO_NUM<std::uint32_t>(m[3]);
 				matched = true;
-			} else if (srell::regex_match(a_str, m, hex_pattern_rgba)) {
-				r = string::to_num<std::uint32_t>(m[1], true);
-				g = string::to_num<std::uint32_t>(m[2], true);
-				b = string::to_num<std::uint32_t>(m[3], true);
-				a = string::to_num<std::uint32_t>(m[4], true);
+			} else if (boost::regex_match(a_str, m, hex_pattern_rgba)) {
+				r = REX::STR::TO_NUM<std::uint32_t>(m[1], true);
+				g = REX::STR::TO_NUM<std::uint32_t>(m[2], true);
+				b = REX::STR::TO_NUM<std::uint32_t>(m[3], true);
+				a = REX::STR::TO_NUM<std::uint32_t>(m[4], true);
 				isHex = true;
 				matched = true;
-			} else if (srell::regex_match(a_str, m, hex_pattern_rgb)) {
-				r = string::to_num<std::uint32_t>(m[1], true);
-				g = string::to_num<std::uint32_t>(m[2], true);
-				b = string::to_num<std::uint32_t>(m[3], true);
+			} else if (boost::regex_match(a_str, m, hex_pattern_rgb)) {
+				r = REX::STR::TO_NUM<std::uint32_t>(m[1], true);
+				g = REX::STR::TO_NUM<std::uint32_t>(m[2], true);
+				b = REX::STR::TO_NUM<std::uint32_t>(m[3], true);
 				isHex = true;
 				matched = true;
 			}
@@ -102,7 +102,7 @@ namespace ImGui
 				return { color, isHex };
 			}
 		} else {
-			return { string::to_num<T>(a_str), false };
+			return { REX::STR::TO_NUM<T>(a_str), false };
 		}
 	}
 

@@ -5,7 +5,7 @@
 #include "KillFeed.h"
 
 class Manager :
-	public REX::Singleton<Manager>,
+	public REX::TSingleton<Manager>,
 	public RE::BSTEventSink<RE::TESDeathEvent>,
 	public RE::BSTEventSink<RE::TESLoadGameEvent>,
 	public RE::BSTEventSink<RE::InputEvent*>
@@ -81,8 +81,8 @@ private:
 
 		// members
 		ImVec4                                 textColor{};
-		REX::EnumSet<Visibility, std::uint8_t> visibilityKills{ Visibility::kBoth };
-		REX::EnumSet<Visibility, std::uint8_t> visibilityReanimation{ Visibility::kBoth };
+		REX::TEnumSet<Visibility, std::uint8_t> visibilityKills{ Visibility::kBoth };
+		REX::TEnumSet<Visibility, std::uint8_t> visibilityReanimation{ Visibility::kBoth };
 	};
 
 	void LoadGenericSettings(CSimpleIniA& a_ini);

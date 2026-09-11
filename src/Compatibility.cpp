@@ -60,9 +60,9 @@ void ModAPIHandler::LoadAPIs()
 {
 	if (FUCK::Connect("KillFeed")) {
 		FUCK::RegisterTool(&fuckTool);
-		logger::info("Kill Feed FUCK Menu registered");
+		REX::INFO("Kill Feed FUCK Menu registered");
 	} else {
-		logger::error("Failed to connect to FUCK API");
+		REX::ERROR("Failed to connect to FUCK API");
 	}
 }
 

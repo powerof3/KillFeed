@@ -22,7 +22,7 @@ void CauseOfDeathManager::LoadIcons()
 		[this, device, textureScale](const auto& entry) {
 			const auto& [cause, name] = entry;
 			if (!icons[static_cast<std::size_t>(cause)].Load(device, name, textureScale)) {
-				logger::warn("Failed to load icon for cause: {}", static_cast<std::size_t>(cause));
+				REX::WARN("Failed to load icon for cause: {}", static_cast<std::size_t>(cause));
 			}
 		});
 }
@@ -38,7 +38,7 @@ void CauseOfDeathManager::LoadFuckSettings()
 {
 	auto oldIconScale = iconScale;
 	if (FUCK::SliderFloat("$KF_IconScale_Text"_T, &iconScale, 0.01f, 1.f, "%.3f")) {
-		if (!numeric::essentially_equal(iconScale, oldIconScale)) {
+		if (!REX::FLT::ESSENTIALLY_EQUAL(iconScale, oldIconScale)) {
 			reloadIcons.store(true, std::memory_order_release);
 		}
 	}
@@ -48,8 +48,8 @@ void CauseOfDeathManager::LoadFuckSettings()
 void CauseOfDeathManager::LoadMCMSettings(CSimpleIniA& a_ini)
 {
 	auto oldIconScale = iconScale;
-	ini::get_value(a_ini, iconScale, "Icons", "fIconScale");
-	if (!numeric::essentially_equal(iconScale, oldIconScale)) {
+	stl::get_value(a_ini, iconScale, "Icons", "fIconScale");
+	if (!REX::FLT::ESSENTIALLY_EQUAL(iconScale, oldIconScale)) {
 		reloadIcons.store(true, std::memory_order_release);
 	}
 }
@@ -90,7 +90,7 @@ const ImGui::IconTexture* CauseOfDeathManager::GetIcon(CAUSE_OF_DEATH a_cause) n
 
 CauseOfDeathManager::HitSource CauseOfDeathManager::GetWeaponSource(const RE::TESObjectREFRPtr& a_victim, const RE::TESObjectREFRPtr& a_killer)
 {
-	logger::debug("\tGetWeaponSource");
+	REX::DEBUG("\tGetWeaponSource");
 
 	HitSource hitSrc{};
 
@@ -118,27 +118,27 @@ CauseOfDeathManager::HitSource CauseOfDeathManager::GetWeaponSource(const RE::TE
 		};
 
 		if (hitSrc.weapon) {
-			logger::debug("\t\tWeapon: {}", RE::FormLogger(hitSrc.weapon));
-			logger::debug("\t\tSource: {}", RE::FormLogger(hitSrc.src.get()));
+			REX::DEBUG("\t\tWeapon: {}", RE::FormLogger(hitSrc.weapon));
+			REX::DEBUG("\t\tSource: {}", RE::FormLogger(hitSrc.src.get()));
 
 			if (!a_killer) {
-				logger::debug("\t\t-> No killer specified, returning cached weapon");
+				REX::DEBUG("\t\t-> No killer specified, returning cached weapon");
 			} else if (hitSrc.src == a_killer || owner_actor_is_killer()) {
-				logger::debug("\t\t\t-> Source matches killer, returning cached weapon");
+				REX::DEBUG("\t\t\t-> Source matches killer, returning cached weapon");
 			} else {
-				logger::debug("\t\t\t-> Source does not match killer ({}), ignoring cache", RE::FormLogger(a_killer.get()));
+				REX::DEBUG("\t\t\t-> Source does not match killer ({}), ignoring cache", RE::FormLogger(a_killer.get()));
 				hitSrc.weapon = nullptr;
 			}
 		} else {
-			logger::debug("\t\tWeapon is NULL in hit source map");
+			REX::DEBUG("\t\tWeapon is NULL in hit source map");
 			if (hitSrc.src) {
-				logger::debug("\t\tSource found: (Base: {})", RE::FormLogger(hitSrc.src->GetBaseObject()));
+				REX::DEBUG("\t\tSource found: (Base: {})", RE::FormLogger(hitSrc.src->GetBaseObject()));
 			} else {
-				logger::debug("\t\tSource is NULL in hit source map");
+				REX::DEBUG("\t\tSource is NULL in hit source map");
 			}
 		}
 	} else {
-		logger::debug("\t\tNo cached hit source found in hitSourceMap");
+		REX::DEBUG("\t\tNo cached hit source found in hitSourceMap");
 	}
 
 	return hitSrc;
@@ -149,7 +149,7 @@ OptCause CauseOfDeathManager::GetCauseFromWeapon(const RE::TESObjectREFRPtr& a_k
 	auto weaponType = a_weapon->GetWeaponType();
 	auto killerActor = a_killer ? a_killer->As<RE::Actor>() : nullptr;
 
-	logger::debug("GetCauseFromWeapon: weapon={}, weaponType={}",
+	REX::DEBUG("GetCauseFromWeapon: weapon={}, weaponType={}",
 		RE::FormLogger(a_weapon), static_cast<std::uint32_t>(weaponType));
 
 	OptCause cause{};
@@ -158,7 +158,7 @@ OptCause CauseOfDeathManager::GetCauseFromWeapon(const RE::TESObjectREFRPtr& a_k
 		if (a_keyword) {
 			if (auto edid = a_keyword->GetFormEditorID()) {
 				if (auto it = weaponKeywordCause.find(edid); it != weaponKeywordCause.end()) {
-					logger::debug("\t\t-> {} keyword found", edid);
+					REX::DEBUG("\t\t-> {} keyword found", edid);
 					cause = it->second;
 					return RE::BSContainer::ForEachResult::kStop;
 				}
@@ -178,11 +178,11 @@ OptCause CauseOfDeathManager::GetCauseFromWeapon(const RE::TESObjectREFRPtr& a_k
 		{
 			if (a_weapon->impactDataSet && a_weapon->impactDataSet->GetFormID() == 0x189E8) {
 				cause = CAUSE_OF_DEATH::kDart;
-				logger::debug("\t\t-> Dart");
+				REX::DEBUG("\t\t-> Dart");
 			} else {
 				if (killerActor) {
 					if (killerActor->HasKeywordString("ActorTypeNPC")) {
-						logger::debug("\t\t\t> HandToHandMelee (ActorTypeNPC)");
+						REX::DEBUG("\t\t\t> HandToHandMelee (ActorTypeNPC)");
 						cause = CAUSE_OF_DEATH::kHandToHandMelee;
 					} else {
 						cause = GetCauseFromCreature(killerActor);
@@ -193,52 +193,52 @@ OptCause CauseOfDeathManager::GetCauseFromWeapon(const RE::TESObjectREFRPtr& a_k
 		break;
 	case RE::WEAPON_TYPE::kOneHandSword:
 		{
-			if (has_formid(0x0007A91A) || string::iequals(a_weapon->GetModel(), R"(creationclub\SBJSSE001\weapons\Zulfiqar\Zulfiqar.nif)")) {
-				logger::debug("\t\t-> Scimitar");
+			if (has_formid(0x0007A91A) || REX::STR::IEQUALS(a_weapon->GetModel(), R"(creationclub\SBJSSE001\weapons\Zulfiqar\Zulfiqar.nif)")) {
+				REX::DEBUG("\t\t-> Scimitar");
 				cause = CAUSE_OF_DEATH::kScimitar;
 			} else {
-				logger::debug("\t\t-> OneHandSword");
+				REX::DEBUG("\t\t-> OneHandSword");
 				cause = CAUSE_OF_DEATH::kOneHandSword;
 			}
 		}
 		break;
 	case RE::WEAPON_TYPE::kOneHandDagger:
 		cause = CAUSE_OF_DEATH::kOneHandDagger;
-		logger::debug("\t\t-> OneHandDagger");
+		REX::DEBUG("\t\t-> OneHandDagger");
 		break;
 	case RE::WEAPON_TYPE::kOneHandAxe:
 		cause = CAUSE_OF_DEATH::kOneHandAxe;
-		logger::debug("\t\t-> OneHandAxe");
+		REX::DEBUG("\t\t-> OneHandAxe");
 		break;
 	case RE::WEAPON_TYPE::kOneHandMace:
 		cause = CAUSE_OF_DEATH::kOneHandMace;
-		logger::debug("\t\t-> OneHandMace");
+		REX::DEBUG("\t\t-> OneHandMace");
 		break;
 	case RE::WEAPON_TYPE::kTwoHandSword:
 		cause = GetCauseFromWeapon2HSword(killerActor);
 		break;
 	case RE::WEAPON_TYPE::kTwoHandAxe:
-		logger::debug("\t\t-> TwoHandAxe");
+		REX::DEBUG("\t\t-> TwoHandAxe");
 		cause = CAUSE_OF_DEATH::kTwoHandAxe;
 		break;
 	case RE::WEAPON_TYPE::kBow:
 		{
 			if (killerActor && killerActor->HasKeywordString("ActorTypeDwarven")) {
-				logger::debug("\t\t-> Crossbow");
+				REX::DEBUG("\t\t-> Crossbow");
 				cause = CAUSE_OF_DEATH::kCrossbow;
 			} else {
-				logger::debug("\t\t-> Bow");
+				REX::DEBUG("\t\t-> Bow");
 				cause = CAUSE_OF_DEATH::kBow;
 			}
 		}
 		break;
 	case RE::WEAPON_TYPE::kStaff:
 		cause = CAUSE_OF_DEATH::kStaff;
-		logger::debug("\t\t-> Staff");
+		REX::DEBUG("\t\t-> Staff");
 		break;
 	case RE::WEAPON_TYPE::kCrossbow:
 		cause = CAUSE_OF_DEATH::kCrossbow;
-		logger::debug("\t\t-> Crossbow");
+		REX::DEBUG("\t\t-> Crossbow");
 		break;
 	default:
 		std::unreachable();
@@ -274,16 +274,16 @@ CAUSE_OF_DEATH CauseOfDeathManager::GetCauseFromWeapon2HSword(RE::Actor* a_kille
 {
 	if (a_killer) {
 		if (a_killer->HasKeywordString("ActorTypeGiant")) {
-			logger::debug("\t\t-> Club");
+			REX::DEBUG("\t\t-> Club");
 			return CAUSE_OF_DEATH::kClub;
 		}
 		if (a_killer->HasKeywordString("DLC2RieklingKeyword")) {
-			logger::debug("\t\t-> Spear");
+			REX::DEBUG("\t\t-> Spear");
 			return CAUSE_OF_DEATH::kSpear;
 		}
 	}
 
-	logger::debug("\t\t-> TwoHandSword");
+	REX::DEBUG("\t\t-> TwoHandSword");
 	return CAUSE_OF_DEATH::kTwoHandSword;
 }
 
@@ -292,7 +292,7 @@ OptCause CauseOfDeathManager::GetCauseFromCreature(const RE::Actor* killer)
 	OptCause cause{};
 
 	if (auto killerRace = killer ? killer->GetRace() : nullptr) {
-		logger::debug("\t\t\t\t\tKiller race: {}", RE::FormLogger(killerRace));
+		REX::DEBUG("\t\t\t\t\tKiller race: {}", RE::FormLogger(killerRace));
 
 		if (auto voiceType = killerRace->defaultVoiceTypes[0]) {
 			if (auto it = creatureCause.find(voiceType->GetFormEditorID()); it != creatureCause.end()) {
@@ -317,7 +317,7 @@ OptCausePair CauseOfDeathManager::GetCauseFromSource(RE::TESForm* a_src, const R
 
 CauseOfDeathManager::MGEFSource CauseOfDeathManager::GetMagicSource(const RE::TESObjectREFRPtr& a_victim)
 {
-	logger::debug("\tGetMagicSource");
+	REX::DEBUG("\tGetMagicSource");
 
 	std::optional<MGEFSource> bestSource;
 	float                     bestMagnitude = -1.0f;
@@ -327,7 +327,7 @@ CauseOfDeathManager::MGEFSource CauseOfDeathManager::GetMagicSource(const RE::TE
 	auto victimActor = a_victim->As<RE::Actor>();
 
 	if (auto activeEffects = victimActor->GetActiveEffectList()) {
-		logger::debug("\t\t{} active effects", activeEffects->size());
+		REX::DEBUG("\t\t{} active effects", activeEffects->size());
 
 		std::uint32_t effectIndex = 0;
 
@@ -341,13 +341,13 @@ CauseOfDeathManager::MGEFSource CauseOfDeathManager::GetMagicSource(const RE::TE
 				}
 
 				if (mgef->data.flags.none(MGEF_FLAG::kDetrimental)) {
-					logger::debug("\t\t\tEffect[{}] {} - Skipped (not detrimental)", effectIndex, RE::FormLogger(mgef));
+					REX::DEBUG("\t\t\tEffect[{}] {} - Skipped (not detrimental)", effectIndex, RE::FormLogger(mgef));
 					effectIndex++;
 					continue;
 				}
 
 				if (spell->GetCastingType() == RE::MagicSystem::CastingType::kConstantEffect) {
-					logger::debug("\t\t\tEffect[{}] {} - Skipped (casting type is constant)",
+					REX::DEBUG("\t\t\tEffect[{}] {} - Skipped (casting type is constant)",
 						effectIndex,
 						RE::FormLogger(mgef));
 					effectIndex++;
@@ -356,7 +356,7 @@ CauseOfDeathManager::MGEFSource CauseOfDeathManager::GetMagicSource(const RE::TE
 
 				auto caster = activeEffect->caster.get();
 
-				logger::debug("\t\t\tEffect[{}]: mgef={}, spell={}, magnitude={:.2f}, caster={}, hostile={}, detrimental={}",
+				REX::DEBUG("\t\t\tEffect[{}]: mgef={}, spell={}, magnitude={:.2f}, caster={}, hostile={}, detrimental={}",
 					effectIndex,
 					RE::FormLogger(mgef),
 					RE::FormLogger(spell),
@@ -373,20 +373,20 @@ CauseOfDeathManager::MGEFSource CauseOfDeathManager::GetMagicSource(const RE::TE
 			effectIndex++;
 		}
 
-		logger::debug("\t\tSummary: {} total effects", effectIndex);
+		REX::DEBUG("\t\tSummary: {} total effects", effectIndex);
 	} else {
-		logger::debug("\t\tVictim has no active effects");
+		REX::DEBUG("\t\tVictim has no active effects");
 	}
 
 	if (bestSource) {
-		logger::debug("\t\t-> Best source found: mgef={}, spell={}, magnitude={:.2f}",
+		REX::DEBUG("\t\t-> Best source found: mgef={}, spell={}, magnitude={:.2f}",
 			RE::FormLogger(bestSource->mgef),
 			RE::FormLogger(bestSource->spell),
 			bestMagnitude);
 		return *bestSource;
 	}
 
-	logger::debug("\tGetMagicSource: No magic source found, returning empty");
+	REX::DEBUG("\tGetMagicSource: No magic source found, returning empty");
 	return {};
 }
 
@@ -396,12 +396,12 @@ OptCausePair CauseOfDeathManager::GetCauseFromMGEF(const MGEFSource& a_magicItem
 
 	const auto& [mgef, magicItem, caster, src] = a_magicItem;
 
-	logger::debug("\tGetCauseFromMGEF: mgef={}, spell={}", RE::FormLogger(mgef), RE::FormLogger(magicItem));
+	REX::DEBUG("\tGetCauseFromMGEF: mgef={}, spell={}", RE::FormLogger(mgef), RE::FormLogger(magicItem));
 
 	auto commandingOwner = caster ? caster->GetCommandingActor() : RE::ActorPtr{};
 
 	if (commandingOwner && a_killer && commandingOwner != a_killer) {
-		logger::debug("\t\t-> Commanding actor is not killer; {} != {}", RE::FormLogger(commandingOwner.get()), RE::FormLogger(a_killer.get()));
+		REX::DEBUG("\t\t-> Commanding actor is not killer; {} != {}", RE::FormLogger(commandingOwner.get()), RE::FormLogger(a_killer.get()));
 		return cause;
 	}
 
@@ -427,7 +427,7 @@ OptCausePair CauseOfDeathManager::GetCauseFromMGEF(const MGEFSource& a_magicItem
 
 	const auto resolve_cast_source = [&] [[nodiscard]] (std::string_view a_type, CAUSE_OF_DEATH a_default, OptCause a_dragon, OptCause a_shout) {
 		OptCausePair castSource{};
-		logger::debug("\t\t-> {} ({})", a_type, isStaff ? "staff" : isScroll ? "scroll" :
+		REX::DEBUG("\t\t-> {} ({})", a_type, isStaff ? "staff" : isScroll ? "scroll" :
 																isWeapEnch   ? "weapon enchantment" :
 																isDragon     ? "dragon" :
 																isShout      ? "shout" :
@@ -480,14 +480,14 @@ OptCausePair CauseOfDeathManager::GetCauseFromMGEF(const MGEFSource& a_magicItem
 			std::nullopt,
 			std::nullopt);
 	} else if (mgef_has([](auto e) { return e->GetFormID() == 0xC367A; })) {  // PerkBleedingDamage
-		logger::debug("\t\t-> Bleeding");
+		REX::DEBUG("\t\t-> Bleeding");
 		if (src) {
 			cause = GetCauseFromSource(src, a_killer, CAUSE_OF_DEATH::kBleeding);
 		} else {
 			cause.first = CAUSE_OF_DEATH::kBleeding;
 		}
 	} else if (mgef_has([](auto e) { return e->GetFormID() == 0x201533C; })) {  // DLC1LD_LavaEffect
-		logger::debug("\t\t-> Lava");
+		REX::DEBUG("\t\t-> Lava");
 		cause.first = CAUSE_OF_DEATH::kLava;
 	} else if (mgef_has([](auto e) { return e->HasArchetype(RE::EffectArchetype::kAbsorb) || stl::any_of(e->GetFormID(), 0x02008449, 0x02008448, 0x0200844A); })) {  //DLC1DragonDrainVitalityX
 		cause = resolve_cast_source("Absorb",
@@ -495,7 +495,7 @@ OptCausePair CauseOfDeathManager::GetCauseFromMGEF(const MGEFSource& a_magicItem
 			CAUSE_OF_DEATH::kDrainDragon,
 			CAUSE_OF_DEATH::kDrainShout);
 	} else if (magicItem->IsPoison() || mgef_has([](auto e) { return e->data.resistVariable == RE::ActorValue::kPoisonResist; })) {
-		logger::debug("\t\t-> Poison");
+		REX::DEBUG("\t\t-> Poison");
 		if (src) {
 			cause = GetCauseFromSource(src, a_killer, CAUSE_OF_DEATH::kPoison);
 		} else if (mgef_has([&](auto x) { return x->data.projectileBase && stl::any_of(x->data.projectileBase->GetFormID(), 0x000A852A, 0x001090F8, 0x02013B80); })) {
@@ -512,15 +512,15 @@ OptCausePair CauseOfDeathManager::GetCauseFromMGEF(const MGEFSource& a_magicItem
 			std::nullopt,
 			std::nullopt);
 	} else if (mgef_has([](auto e) { return e->GetFormID() == 0x201533B || (e->data.effectShader && e->data.effectShader->GetFormID() == 0x0010FDF9); })) {  // DLC1LD_SteamEffect
-		logger::debug("\t\t-> Steam");
+		REX::DEBUG("\t\t-> Steam");
 		cause.first = CAUSE_OF_DEATH::kSteam;
 	} else if (isShout) {
-		logger::debug("\t\t-> Shout (generic)");
+		REX::DEBUG("\t\t-> Shout (generic)");
 		cause.first = CAUSE_OF_DEATH::kShout;
 	}
 
 	if (!cause.first) {
-		logger::debug("\t\t-> No matching magic damage type");
+		REX::DEBUG("\t\t-> No matching magic damage type");
 	}
 
 	return cause;
@@ -566,11 +566,11 @@ OptCausePair CauseOfDeathManager::GetCauseFromEquipped(const RE::TESObjectREFRPt
 			continue;
 		}
 
-		logger::debug("\t\t{} hand: {}", i ? "Left" : "Right", RE::FormLogger(equipped));
+		REX::DEBUG("\t\t{} hand: {}", i ? "Left" : "Right", RE::FormLogger(equipped));
 
 		if (auto weapon = equipped->As<RE::TESObjectWEAP>()) {
 			if (auto weapCause = GetCauseFromWeapon(a_killer, weapon)) {
-				logger::debug("\t\t\t-> Weapon cause from {} hand: {}",
+				REX::DEBUG("\t\t\t-> Weapon cause from {} hand: {}",
 					i ? "left" : "right",
 					static_cast<std::uint32_t>(*weapCause));
 				cause.first = weapCause;
@@ -584,7 +584,7 @@ OptCausePair CauseOfDeathManager::GetCauseFromEquipped(const RE::TESObjectREFRPt
 					MGEFSource mgefSrc{ avEffect, spell, RE::ActorPtr{ killerActor } };
 					cause = GetCauseFromMGEF(mgefSrc, a_killer);
 					if (cause.first) {
-						logger::debug("\t\t\t-> Magic cause from {} hand: {}", i ? "left" : "right", static_cast<std::uint32_t>(*cause.first));
+						REX::DEBUG("\t\t\t-> Magic cause from {} hand: {}", i ? "left" : "right", static_cast<std::uint32_t>(*cause.first));
 						return cause;
 					}
 				}
@@ -592,7 +592,7 @@ OptCausePair CauseOfDeathManager::GetCauseFromEquipped(const RE::TESObjectREFRPt
 		}
 	}
 
-	logger::debug("\tGetCauseFromEquipped: No cause found");
+	REX::DEBUG("\tGetCauseFromEquipped: No cause found");
 	return cause;
 }
 
@@ -655,16 +655,16 @@ std::pair<DeathData, RE::TESObjectREFRPtr> CauseOfDeathManager::CreateDeathData(
 	OptCause primaryCause;
 	OptCause secondaryCause;
 
-	logger::debug("=== CreateDeathData ===");
-	logger::debug("Victim: {}", RE::FormLogger(a_victim.get()));
-	logger::debug("Assumed killer: {}", RE::FormLogger(actualKiller.get()));
+	REX::DEBUG("=== CreateDeathData ===");
+	REX::DEBUG("Victim: {}", RE::FormLogger(a_victim.get()));
+	REX::DEBUG("Assumed killer: {}", RE::FormLogger(actualKiller.get()));
 
 	if (!actualKiller && commandedActorMap.cvisit(a_victim->GetFormID(), [&](const auto& a_commandedActor) {
 			victimCommanderActor = a_commandedActor.second.get();
 		})) {
 		primaryCause = CAUSE_OF_DEATH::kSummonExpired;
 	} else if (auto [src, weapon] = GetWeaponSource(a_victim, actualKiller); weapon) {
-		logger::debug("\tWeapon Source: {}", RE::FormLogger(weapon));
+		REX::DEBUG("\tWeapon Source: {}", RE::FormLogger(weapon));
 
 		primaryCause = GetCauseFromWeapon(src, weapon);
 		if (actualKiller != src) {
@@ -673,7 +673,7 @@ std::pair<DeathData, RE::TESObjectREFRPtr> CauseOfDeathManager::CreateDeathData(
 	} else if (!actualKiller && src) {
 		actualKiller = src;
 		if (const auto baseObj = src->GetBaseObject(); baseObj && baseObj->Is(RE::FormType::Activator)) {
-			logger::debug("\t\tKiller is Activator -> Trap");
+			REX::DEBUG("\t\tKiller is Activator -> Trap");
 			primaryCause = GetCauseFromTrap(baseObj);
 		}
 	} else if (const auto mgef = GetMagicSource(a_victim); mgef.mgef && mgef.spell) {
@@ -685,17 +685,17 @@ std::pair<DeathData, RE::TESObjectREFRPtr> CauseOfDeathManager::CreateDeathData(
 
 	// check if src died by falling
 	if (!primaryCause && !actualKiller) {
-		logger::debug("\tNo killer or cause found, checking for fall damage");
+		REX::DEBUG("\tNo killer or cause found, checking for fall damage");
 		auto victimActor = a_victim->As<RE::Actor>();
 		if (auto charController = victimActor ? victimActor->GetCharController() : nullptr) {
 			if (charController->fallTime > 0.0f) {
-				logger::info("\t\tFall time={}", charController->fallTime);
+				REX::INFO("\t\tFall time={}", charController->fallTime);
 				primaryCause = CAUSE_OF_DEATH::kFalling;
 			} else if (charController->fallStartHeight != 0.0f) {
 				RE::hkVector4 pos;
 				charController->GetPosition(pos, true);
 				auto fallDistance = charController->fallStartHeight - (pos.quad.m128_f32[2] * 69.99125f);
-				logger::info("\t\tFall distance: {}", fallDistance);
+				REX::INFO("\t\tFall distance: {}", fallDistance);
 				if (fallDistance > 0.0f) {
 					primaryCause = CAUSE_OF_DEATH::kFalling;
 				}
@@ -705,13 +705,13 @@ std::pair<DeathData, RE::TESObjectREFRPtr> CauseOfDeathManager::CreateDeathData(
 
 	// check equipped
 	if (!primaryCause) {
-		logger::debug("\tNo cause found. Checking killer's equipped items");
+		REX::DEBUG("\tNo cause found. Checking killer's equipped items");
 		std::tie(primaryCause, secondaryCause) = GetCauseFromEquipped(actualKiller);
 	}
 
 	// check creature if everything failed so far (no valid hit source)
 	if (!primaryCause && actualKiller) {
-		logger::debug("\tNo cause found. Checking killer creature type");
+		REX::DEBUG("\tNo cause found. Checking killer creature type");
 		primaryCause = GetCauseFromCreature(actualKiller->As<RE::Actor>());
 	}
 
@@ -721,11 +721,11 @@ std::pair<DeathData, RE::TESObjectREFRPtr> CauseOfDeathManager::CreateDeathData(
 
 	auto deathData = DeathData(a_victim, actualKiller, a_distance, *primaryCause, secondaryCause);
 
-	logger::debug("Primary Cause: {} ({})", static_cast<std::uint32_t>(*primaryCause), glz::get_enum_name(*primaryCause));
-	logger::debug("Secondary Cause: {} ({})", secondaryCause ? static_cast<std::int32_t>(*secondaryCause) : -1, secondaryCause ? glz::get_enum_name(*secondaryCause) : "None");
-	logger::debug("Victim Name: {}", deathData.victim.get_name());
-	logger::debug("Killer Name: {}", deathData.killer.get_name());
-	logger::debug("=== End CreateDeathData ===");
+	REX::DEBUG("Primary Cause: {} ({})", static_cast<std::uint32_t>(*primaryCause), glz::get_enum_name(*primaryCause));
+	REX::DEBUG("Secondary Cause: {} ({})", secondaryCause ? static_cast<std::int32_t>(*secondaryCause) : -1, secondaryCause ? glz::get_enum_name(*secondaryCause) : "None");
+	REX::DEBUG("Victim Name: {}", deathData.victim.get_name());
+	REX::DEBUG("Killer Name: {}", deathData.killer.get_name());
+	REX::DEBUG("=== End CreateDeathData ===");
 
 	return { deathData, actualKiller };
 }

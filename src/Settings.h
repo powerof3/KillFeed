@@ -107,7 +107,7 @@ void Settings::Visit(CSimpleIniA& a_ini, T& value, const char* a_section, const 
 				value = a_ini.GetLongValue(a_section, a_key, static_cast<long>(value));
 				a_ini.SetLongValue(a_section, a_key, static_cast<long>(value), nullptr);
 			} else {
-				ini::get_value(a_ini, value, a_section, a_key);
+				stl::get_value(a_ini, value, a_section, a_key);
 			}
 		}
 		break;
