@@ -385,7 +385,7 @@ void Manager::ApplyGenericSettings(bool a_oldDebugValue)
 	if (a_oldDebugValue != enableDebug) {
 		auto level = enableDebug ? spdlog::level::debug : spdlog::level::info;
 		spdlog::set_level(level);
-		spdlog::flush_on(level); 
+		spdlog::flush_on(level);
 	}
 
 	UpdateVerticalSpacing();

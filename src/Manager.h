@@ -80,7 +80,7 @@ private:
 		static constexpr std::array visibilityKeys{ "$KF_Visibility_None", "$KF_Visibility_VisibleOnly", "$KF_Visibility_HiddenOnly", "$KF_Visibility_Both" };
 
 		// members
-		ImVec4                                 textColor{};
+		ImVec4                                  textColor{};
 		REX::TEnumSet<Visibility, std::uint8_t> visibilityKills{ Visibility::kBoth };
 		REX::TEnumSet<Visibility, std::uint8_t> visibilityReanimation{ Visibility::kBoth };
 	};

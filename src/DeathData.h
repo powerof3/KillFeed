@@ -39,10 +39,10 @@ struct Format
 	void sync_color_settings(CSimpleIniA& a_ini, SyncMode a_mode);
 
 	// members
-	ImVec4                                     backgroundColor{ 0.0f, 0.0f, 0.0f, 0.68f };
-	bool                                       showDistance{ true };
-	bool                                       showDirection{ true };
-	bool                                       showBackground{ true };
+	ImVec4                                      backgroundColor{ 0.0f, 0.0f, 0.0f, 0.68f };
+	bool                                        showDistance{ true };
+	bool                                        showDirection{ true };
+	bool                                        showBackground{ true };
 	REX::TEnumSet<BackgroundFade, std::uint8_t> backgroundFade;
 };
 
@@ -121,14 +121,14 @@ struct DeathData
 	void update_tints();
 
 	// members
-	Icon                              primaryCause{};
-	std::optional<Icon>               secondaryCause{};
+	Icon                               primaryCause{};
+	std::optional<Icon>                secondaryCause{};
 	REX::TEnumSet<Flags, std::uint8_t> flags{ Flags::kNone };
 	REX::TEnum<IconMode, std::uint8_t> iconMode{ IconMode::kBoth };
-	Combatant                         victim{};
-	Combatant                         killer{};
-	std::string                       distance{};
-	std::array<float, 6>              compassAngle{};
+	Combatant                          victim{};
+	Combatant                          killer{};
+	std::string                        distance{};
+	std::array<float, 6>               compassAngle{};
 
 private:
 	DeathData(std::string a_victimName, std::string a_killerName, EventSource a_victimType, EventSource a_killerType, CAUSE_OF_DEATH a_primaryCause, std::optional<CAUSE_OF_DEATH> a_secondaryCause);

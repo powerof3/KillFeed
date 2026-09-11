@@ -428,11 +428,11 @@ OptCausePair CauseOfDeathManager::GetCauseFromMGEF(const MGEFSource& a_magicItem
 	const auto resolve_cast_source = [&] [[nodiscard]] (std::string_view a_type, CAUSE_OF_DEATH a_default, OptCause a_dragon, OptCause a_shout) {
 		OptCausePair castSource{};
 		REX::DEBUG("\t\t-> {} ({})", a_type, isStaff ? "staff" : isScroll ? "scroll" :
-																isWeapEnch   ? "weapon enchantment" :
-																isDragon     ? "dragon" :
-																isShout      ? "shout" :
-																isHandCast   ? "spell cast" :
-																			   "default");
+															 isWeapEnch   ? "weapon enchantment" :
+															 isDragon     ? "dragon" :
+															 isShout      ? "shout" :
+															 isHandCast   ? "spell cast" :
+																			"default");
 		if (isStaff) {
 			castSource.first = CAUSE_OF_DEATH::kStaffMagic;
 			castSource.second = a_default;
