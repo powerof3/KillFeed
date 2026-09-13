@@ -13,7 +13,6 @@
 #include <codecvt>
 #include <wrl/client.h>
 
-#include <spdlog/spdlog.h>
 #include <DirectXMath.h>
 #include <DirectXTex.h>
 #include <boost/circular_buffer.hpp>
@@ -24,6 +23,7 @@
 #include <boost/unordered/unordered_flat_set.hpp>
 #include <freetype/freetype.h>
 #include <glaze/glaze.hpp>
+#include <spdlog/spdlog.h>
 #include <xbyak/xbyak.h>
 
 #include "imgui_internal.h"
