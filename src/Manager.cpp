@@ -5,8 +5,6 @@
 #include "ImGui/FontStyles.h"
 #include "Settings.h"
 
-#include "spdlog/spdlog.h"
-
 void Manager::CategorySettings::load_mcm_settings(CSimpleIniA& a_ini, const char* a_section)
 {
 	ImGui::LoadColor(a_ini, textColor, a_section, "sTextColor");

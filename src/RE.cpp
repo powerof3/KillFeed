@@ -51,11 +51,16 @@ namespace RE
 		if (const auto base = a_actor->GetBaseObject()) {
 			BSString tmp;
 			if (base->GetActivateText(a_actor.get(), tmp) && !tmp.empty()) {
-				std::string text{ tmp };
-				const auto  pos = text.find('\n');
-				return pos != std::string_view::npos ?
-				           text.substr(pos + 1) :
-				           text;
+				std::string_view text{ tmp };
+				if (const auto pos = text.find('\n'); pos != std::string_view::npos) {
+					text.remove_prefix(pos + 1);
+				}
+				if (const auto pos = text.find('\n'); pos != std::string_view::npos) {
+					text = text.substr(0, pos);
+				}
+				if (!text.empty()) {
+					return std::string{ text };
+				}
 			}
 		}
 

@@ -304,15 +304,26 @@ OptCause CauseOfDeathManager::GetCauseFromCreature(const RE::Actor* killer)
 	return cause;
 }
 
+OptCause CauseOfDeathManager::GetCauseFromSource(RE::TESForm* a_source, const RE::TESObjectREFRPtr& a_killer)
+{
+	if (auto weapon = a_source->As<RE::TESObjectWEAP>()) {
+		return GetCauseFromWeapon(a_killer, weapon);
+	}
+	if (auto ammo = a_source->As<RE::TESAmmo>()) {
+		return GetCauseFromAmmo(ammo);
+	}
+	return CAUSE_OF_DEATH::kGeneric;
+}
+
 OptCausePair CauseOfDeathManager::GetCauseFromSource(RE::TESForm* a_src, const RE::TESObjectREFRPtr& a_killer, OptCause a_secondaryCause)
 {
 	if (auto weapon = a_src->As<RE::TESObjectWEAP>()) {
 		return { GetCauseFromWeapon(a_killer, weapon), a_secondaryCause };
-	} else if (auto ammo = a_src->As<RE::TESAmmo>()) {
-		return { GetCauseFromAmmo(ammo), a_secondaryCause };
-	} else {
-		return { a_secondaryCause, std::nullopt };
 	}
+	if (auto ammo = a_src->As<RE::TESAmmo>()) {
+		return { GetCauseFromAmmo(ammo), a_secondaryCause };
+	}
+	return { a_secondaryCause, std::nullopt };
 }
 
 CauseOfDeathManager::MGEFSource CauseOfDeathManager::GetMagicSource(const RE::TESObjectREFRPtr& a_victim)
@@ -459,26 +470,12 @@ OptCausePair CauseOfDeathManager::GetCauseFromMGEF(const MGEFSource& a_magicItem
 		return castSource;
 	};
 
-	if (auto element = MatchMagicType(mgef, avEffect); element == CAUSE_OF_DEATH::kFire) {
-		cause = resolve_cast_source("MagicDamageFire",
-			CAUSE_OF_DEATH::kFire,
-			CAUSE_OF_DEATH::kFireDragon,
-			CAUSE_OF_DEATH::kFireShout);
-	} else if (element == CAUSE_OF_DEATH::kFrost) {
-		cause = resolve_cast_source("MagicDamageFrost",
-			CAUSE_OF_DEATH::kFrost,
-			CAUSE_OF_DEATH::kFrostDragon,
-			std::nullopt);
-	} else if (element == CAUSE_OF_DEATH::kShock) {
-		cause = resolve_cast_source("MagicDamageShock",
-			CAUSE_OF_DEATH::kShock,
-			CAUSE_OF_DEATH::kShockDragon,
-			CAUSE_OF_DEATH::kShockShout);
-	} else if (element == CAUSE_OF_DEATH::kSun) {
-		cause = resolve_cast_source("MagicDamageSun",
-			CAUSE_OF_DEATH::kSun,
-			std::nullopt,
-			std::nullopt);
+	if (mgef_has([](auto e) { return e->GetFormID() == 0x201533C; })) {  // DLC1LD_LavaEffect
+		REX::DEBUG("\t\t-> Lava");
+		cause.first = CAUSE_OF_DEATH::kLava;
+	} else if (mgef_has([](auto e) { return e->GetFormID() == 0x201533B || (e->data.effectShader && e->data.effectShader->GetFormID() == 0x0010FDF9); })) {  // DLC1LD_SteamEffect
+		REX::DEBUG("\t\t-> Steam");
+		cause.first = CAUSE_OF_DEATH::kSteam;
 	} else if (mgef_has([](auto e) { return e->GetFormID() == 0xC367A; })) {  // PerkBleedingDamage
 		REX::DEBUG("\t\t-> Bleeding");
 		if (src) {
@@ -486,14 +483,20 @@ OptCausePair CauseOfDeathManager::GetCauseFromMGEF(const MGEFSource& a_magicItem
 		} else {
 			cause.first = CAUSE_OF_DEATH::kBleeding;
 		}
-	} else if (mgef_has([](auto e) { return e->GetFormID() == 0x201533C; })) {  // DLC1LD_LavaEffect
-		REX::DEBUG("\t\t-> Lava");
-		cause.first = CAUSE_OF_DEATH::kLava;
-	} else if (mgef_has([](auto e) { return e->HasArchetype(RE::EffectArchetype::kAbsorb) || stl::any_of(e->GetFormID(), 0x02008449, 0x02008448, 0x0200844A); })) {  //DLC1DragonDrainVitalityX
-		cause = resolve_cast_source("Absorb",
-			CAUSE_OF_DEATH::kDrain,
-			CAUSE_OF_DEATH::kDrainDragon,
-			CAUSE_OF_DEATH::kDrainShout);
+	}
+
+	else if (auto element = MatchMagicType(mgef, avEffect); element == CAUSE_OF_DEATH::kFire) {
+		cause = resolve_cast_source("MagicDamageFire", CAUSE_OF_DEATH::kFire, CAUSE_OF_DEATH::kFireDragon, CAUSE_OF_DEATH::kFireShout);
+	} else if (element == CAUSE_OF_DEATH::kFrost) {
+		cause = resolve_cast_source("MagicDamageFrost", CAUSE_OF_DEATH::kFrost, CAUSE_OF_DEATH::kFrostDragon, std::nullopt);
+	} else if (element == CAUSE_OF_DEATH::kShock) {
+		cause = resolve_cast_source("MagicDamageShock", CAUSE_OF_DEATH::kShock, CAUSE_OF_DEATH::kShockDragon, CAUSE_OF_DEATH::kShockShout);
+	} else if (element == CAUSE_OF_DEATH::kSun) {
+		cause = resolve_cast_source("MagicDamageSun", CAUSE_OF_DEATH::kSun, std::nullopt, std::nullopt);
+	}
+
+	else if (mgef_has([](auto e) { return e->HasArchetype(RE::EffectArchetype::kAbsorb) || stl::any_of(e->GetFormID(), 0x02008449, 0x02008448, 0x0200844A); })) {  // DLC1DragonDrainVitalityX
+		cause = resolve_cast_source("Absorb", CAUSE_OF_DEATH::kDrain, CAUSE_OF_DEATH::kDrainDragon, CAUSE_OF_DEATH::kDrainShout);
 	} else if (magicItem->IsPoison() || mgef_has([](auto e) { return e->data.resistVariable == RE::ActorValue::kPoisonResist; })) {
 		REX::DEBUG("\t\t-> Poison");
 		if (src) {
@@ -507,14 +510,9 @@ OptCausePair CauseOfDeathManager::GetCauseFromMGEF(const MGEFSource& a_magicItem
 			cause.first = CAUSE_OF_DEATH::kPoison;
 		}
 	} else if (mgef_has([](auto e) { return e->HasArchetype(RE::EffectArchetype::kBanish); })) {
-		cause = resolve_cast_source("Banish",
-			CAUSE_OF_DEATH::kBanished,
-			std::nullopt,
-			std::nullopt);
-	} else if (mgef_has([](auto e) { return e->GetFormID() == 0x201533B || (e->data.effectShader && e->data.effectShader->GetFormID() == 0x0010FDF9); })) {  // DLC1LD_SteamEffect
-		REX::DEBUG("\t\t-> Steam");
-		cause.first = CAUSE_OF_DEATH::kSteam;
-	} else if (isShout) {
+		cause = resolve_cast_source("Banish", CAUSE_OF_DEATH::kBanished, std::nullopt, std::nullopt);
+	}
+	else if (isShout) {
 		REX::DEBUG("\t\t-> Shout (generic)");
 		cause.first = CAUSE_OF_DEATH::kShout;
 	}
@@ -530,7 +528,7 @@ OptCause CauseOfDeathManager::MatchMagicType(RE::EffectSetting* a_mgef, RE::Effe
 {
 	OptCause result;
 
-	const auto match = [&](RE::EffectSetting* b_mgef) {
+	const auto match = [&](const RE::EffectSetting* b_mgef) {
 		if (!b_mgef || result) {
 			return;
 		}
@@ -650,7 +648,6 @@ CAUSE_OF_DEATH CauseOfDeathManager::GetCauseFromTrap(const RE::TESBoundObject* a
 std::pair<DeathData, RE::TESObjectREFRPtr> CauseOfDeathManager::CreateDeathData(const RE::TESObjectREFRPtr& a_victim, const RE::TESObjectREFRPtr& a_killer, float a_distance)
 {
 	RE::TESObjectREFRPtr actualKiller = a_killer;
-	RE::ActorPtr         victimCommanderActor = nullptr;
 
 	OptCause primaryCause;
 	OptCause secondaryCause;
@@ -659,45 +656,55 @@ std::pair<DeathData, RE::TESObjectREFRPtr> CauseOfDeathManager::CreateDeathData(
 	REX::DEBUG("Victim: {}", RE::FormLogger(a_victim.get()));
 	REX::DEBUG("Assumed killer: {}", RE::FormLogger(actualKiller.get()));
 
-	if (!actualKiller && commandedActorMap.cvisit(a_victim->GetFormID(), [&](const auto& a_commandedActor) {
-			victimCommanderActor = a_commandedActor.second.get();
-		})) {
+	if (!actualKiller && commandedActorMap.cvisit(a_victim->GetFormID(), [](const auto&) {})) {
 		primaryCause = CAUSE_OF_DEATH::kSummonExpired;
-	} else if (auto [src, weapon] = GetWeaponSource(a_victim, actualKiller); weapon) {
-		REX::DEBUG("\tWeapon Source: {}", RE::FormLogger(weapon));
+	}
 
-		primaryCause = GetCauseFromWeapon(src, weapon);
-		if (actualKiller != src) {
+	if (!primaryCause) {
+		if (auto [src, weapon] = GetWeaponSource(a_victim, actualKiller); weapon) {
+			REX::DEBUG("\tWeapon Source: {}", RE::FormLogger(weapon));
+			primaryCause = GetCauseFromWeapon(src, weapon);
 			actualKiller = src;
+		} else if (src) {
+			const auto baseObj = src->GetBaseObject();
+			if (!actualKiller) {
+				actualKiller = src;
+				if (baseObj && baseObj->Is(RE::FormType::Activator)) {
+					REX::DEBUG("\t\tKiller is Activator -> Trap");
+					primaryCause = GetCauseFromTrap(baseObj);
+				}
+			} else if (actualKiller->IsPlayerRef() && baseObj && baseObj->IsInventoryObject()) {
+				REX::DEBUG("\t\tKiller is Inventory Object");
+				primaryCause = GetCauseFromSource(baseObj, actualKiller);
+			}
 		}
-	} else if (!actualKiller && src) {
-		actualKiller = src;
-		if (const auto baseObj = src->GetBaseObject(); baseObj && baseObj->Is(RE::FormType::Activator)) {
-			REX::DEBUG("\t\tKiller is Activator -> Trap");
-			primaryCause = GetCauseFromTrap(baseObj);
-		}
-	} else if (const auto mgef = GetMagicSource(a_victim); mgef.mgef && mgef.spell) {
-		std::tie(primaryCause, secondaryCause) = GetCauseFromMGEF(mgef, actualKiller);
-		if (primaryCause && mgef.caster != actualKiller) {
-			actualKiller = mgef.caster;
+	}
+
+	if (!primaryCause) {
+		if (const auto mgef = GetMagicSource(a_victim); mgef.mgef && mgef.spell) {
+			std::tie(primaryCause, secondaryCause) = GetCauseFromMGEF(mgef, actualKiller);
+			if (primaryCause && mgef.caster != actualKiller) {
+				actualKiller = mgef.caster;
+			}
 		}
 	}
 
 	// check if src died by falling
 	if (!primaryCause && !actualKiller) {
 		REX::DEBUG("\tNo killer or cause found, checking for fall damage");
-		auto victimActor = a_victim->As<RE::Actor>();
-		if (auto charController = victimActor ? victimActor->GetCharController() : nullptr) {
-			if (charController->fallTime > 0.0f) {
-				REX::INFO("\t\tFall time={}", charController->fallTime);
-				primaryCause = CAUSE_OF_DEATH::kFalling;
-			} else if (charController->fallStartHeight != 0.0f) {
-				RE::hkVector4 pos;
-				charController->GetPosition(pos, true);
-				auto fallDistance = charController->fallStartHeight - (pos.quad.m128_f32[2] * 69.99125f);
-				REX::INFO("\t\tFall distance: {}", fallDistance);
-				if (fallDistance > 0.0f) {
+		if (auto victimActor = a_victim->As<RE::Actor>()) {
+			if (auto charController = victimActor->GetCharController()) {
+				if (charController->fallTime > 0.0f) {
+					REX::DEBUG("\t\tFall time={}", charController->fallTime);
 					primaryCause = CAUSE_OF_DEATH::kFalling;
+				} else if (charController->fallStartHeight != 0.0f) {
+					RE::hkVector4 pos;
+					charController->GetPosition(pos, true);
+					auto fallDistance = charController->fallStartHeight - (pos.quad.m128_f32[2] * 69.99125f);
+					REX::DEBUG("\t\tFall distance: {}", fallDistance);
+					if (fallDistance > 0.0f) {
+						primaryCause = CAUSE_OF_DEATH::kFalling;
+					}
 				}
 			}
 		}

@@ -46,6 +46,7 @@ private:
 	static CAUSE_OF_DEATH GetCauseFromWeapon2HSword(RE::Actor* a_killer);
 	CAUSE_OF_DEATH        GetCauseFromAmmo(RE::TESAmmo* a_ammo);
 	OptCause              GetCauseFromCreature(const RE::Actor* killer);
+	OptCause              GetCauseFromSource(RE::TESForm* a_source, const RE::TESObjectREFRPtr& a_killer);
 	OptCausePair          GetCauseFromSource(RE::TESForm* a_source, const RE::TESObjectREFRPtr& a_killer, OptCause a_secondaryCause);
 
 	MGEFSource   GetMagicSource(const RE::TESObjectREFRPtr& a_victim);

@@ -116,7 +116,7 @@ struct DeathData
 	void               set_offscreen(bool a_isOffscreen) noexcept { flags.set(a_isOffscreen, Flags::kOffscreen); }
 	[[nodiscard]] bool is_offscreen() const noexcept { return flags.any(Flags::kOffscreen); }
 
-	DeathData::IconMode get_icon_mode(bool a_simpleIcons) const;
+	DeathData::IconMode get_icon_mode(bool a_singleIcon) const;
 
 	void update_tints();
 

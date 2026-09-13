@@ -11,11 +11,9 @@
 #include "SKSE/SKSE.h"
 
 #include <codecvt>
-#include <dxgi.h>
-#include <format>
-#include <shlobj.h>
 #include <wrl/client.h>
 
+#include <spdlog/spdlog.h>
 #include <DirectXMath.h>
 #include <DirectXTex.h>
 #include <boost/circular_buffer.hpp>
@@ -26,7 +24,6 @@
 #include <boost/unordered/unordered_flat_set.hpp>
 #include <freetype/freetype.h>
 #include <glaze/glaze.hpp>
-#include <spdlog/sinks/msvc_sink.h>
 #include <xbyak/xbyak.h>
 
 #include "imgui_internal.h"
@@ -45,8 +42,6 @@ using namespace std::literals;
 using namespace clib_util;
 using namespace REX::STR::literals;
 using namespace RE::literals;
-
-namespace logger = SKSE::log;
 
 using EventResult = RE::BSEventNotifyControl;
 
