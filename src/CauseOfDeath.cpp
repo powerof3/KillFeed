@@ -511,8 +511,7 @@ OptCausePair CauseOfDeathManager::GetCauseFromMGEF(const MGEFSource& a_magicItem
 		}
 	} else if (mgef_has([](auto e) { return e->HasArchetype(RE::EffectArchetype::kBanish); })) {
 		cause = resolve_cast_source("Banish", CAUSE_OF_DEATH::kBanished, std::nullopt, std::nullopt);
-	}
-	else if (isShout) {
+	} else if (isShout) {
 		REX::DEBUG("\t\t-> Shout (generic)");
 		cause.first = CAUSE_OF_DEATH::kShout;
 	}
